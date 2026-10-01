@@ -1,0 +1,3 @@
+[2026-09-26 21:30:54.910] [INFO   ] [kari.test] [logger.py:182] - 서비스 로거 정상 초기화 완료 (service.log)
+[2026-09-26 21:30:54.911] [WARNING] [kari.test] [logger.py:183] - 경고 메시지 테스트
+[2026-09-26 21:30:54.911] [ERROR  ] [kari.test] [logger.py:184] - 에러 메시지 테스트 (error.log 및 service.log 동시 적재)

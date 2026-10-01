@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pictro Studio - AI 배너 검수·편집 관리자 콘솔</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260927_1926">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-logo">
+        <div class="logo-icon">P</div>
+        <div class="brand-text">
+          <h1>PICTRO <span class="badge-pro">STUDIO</span></h1>
+          <p class="brand-sub">AI Banner OCR · Inpaint · Typography Studio</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <!-- Engine Options (3 Modes) -->
+      <div class="mode-selector-group">
+        <label class="mode-btn" data-mode="detect">
+          <input type="radio" name="engine_mode" value="detect">
+          <span class="mode-icon">🔍</span>
+          <span class="mode-title">Detect</span>
+          <span class="mode-badge">OCR 탐색</span>
+        </label>
+        <label class="mode-btn" data-mode="clear">
+          <input type="radio" name="engine_mode" value="clear">
+          <span class="mode-icon">✨</span>
+          <span class="mode-title">Clear</span>
+          <span class="mode-badge">배경 복원</span>
+        </label>
+        <label class="mode-btn active" data-mode="trans">
+          <input type="radio" name="engine_mode" value="trans" checked>
+          <span class="mode-icon">🌐</span>
+          <span class="mode-title">Translate</span>
+          <span class="mode-badge">풀코스 치환</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <div class="server-status-pill">
+        <span class="status-dot green"></span>
+        <span class="status-text">Mika 비전</span>
+      </div>
+      <div class="server-status-pill">
+        <span class="status-dot blue"></span>
+        <span class="status-text">AI 번역 가동</span>
+      </div>
+      <!-- Go to Gallery Button -->
+      <a href="gallery.html" class="portal-switch-btn" style="display: inline-flex; align-items: center; gap: 7px; background: rgba(0, 240, 118, 0.15); border: 1px solid rgba(0, 240, 118, 0.45); color: #00f076; padding: 7px 15px; border-radius: 9px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 10px rgba(0, 240, 118, 0.15);" onmouseover="this.style.background='rgba(0, 240, 118, 0.28)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(0, 240, 118, 0.15)'; this.style.transform='translateY(0)';">
+        <span>📂 마이 갤러리 가기 ↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="studio-container">
+    <!-- Top Control Bar (File Input, URL Input, Language, Action) -->
+    <section class="control-panel glass-card">
+      <div class="control-row">
+        <!-- Target Language Selector -->
+        <div class="input-field-group">
+          <label for="targetLangSelect">타겟 언어</label>
+          <select id="targetLangSelect" class="styled-select">
+            <option value="en" selected>🇺🇸 영어 (English)</option>
+            <option value="ja">🇯🇵 일본어 (日本語)</option>
+            <option value="zh">🇨🇳 중국어 (简体中文)</option>
+            <option value="vi">🇻🇳 베트남어 (Tiếng Việt)</option>
+            <option value="ko">🇰🇷 한국어 (Korean)</option>
+          </select>
+        </div>
+
+        <!-- Remote URL Input -->
+        <div class="input-field-group url-group">
+          <label for="remoteUrlInput">원격 이미지 URL 입력</label>
+          <div class="url-input-wrap">
+            <input type="url" id="remoteUrlInput" placeholder="https://example.com/banner.jpg" class="styled-input">
+            <button id="btnFetchUrl" class="btn-secondary" title="URL 이미지 불러오기">불러오기</button>
+          </div>
+        </div>
+
+        <!-- Sample Loaders -->
+        <div class="input-field-group sample-group">
+          <label>빠른 테스트 샘플</label>
+          <div class="btn-group-samples">
+            <button class="btn-sample" data-sample="banner5">🏥 성형 배너 (800x800)</button>
+            <button class="btn-sample" data-sample="banner6">🛍️ 커머스 배너 (460x460)</button>
+          </div>
+        </div>
+
+        <!-- Main Run Button -->
+        <div class="action-btn-group">
+          <button id="btnProcessAI" class="btn-primary glow-btn">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">AI 변환 실행</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workspace Split View (Left: Dual Canvas/Viewer, Right: Inspector & Live Editor) -->
+    <div class="workspace-grid">
+      <!-- Left: Visual Canvas & Comparison -->
+      <section class="viewport-card glass-card">
+        <div class="card-header">
+          <div class="view-tabs">
+            <button class="tab-btn active" data-tab="sideBySide">1:1 비교 뷰어</button>
+            <button class="tab-btn" data-tab="liveCanvas">실시간 편집 캔버스</button>
+            <button class="tab-btn" data-tab="cleanBg">복원 배경 (Clean BG)</button>
+            <button class="tab-btn" data-tab="ocrBoxes">OCR 영역 시각화</button>
+          </div>
+          <div class="view-tools">
+            <button id="btnZoomIn" class="tool-btn" title="확대">➕</button>
+            <button id="btnZoomOut" class="tool-btn" title="축소">➖</button>
+            <button id="btnZoomReset" class="tool-btn" title="100% 리셋">↺ 100%</button>
+          </div>
+        </div>
+
+        <div class="card-body view-area" id="viewArea">
+          <!-- Dropzone (Shown when no image loaded) -->
+          <div class="dropzone-box" id="dropzoneBox">
+            <div class="drop-icon">📋</div>
+            <h3>이미지를 드래그 & 드롭하거나 Ctrl+V 로 붙여넣으세요</h3>
+            <p>캡처 도구(Win+Shift+S)로 복사한 이미지도 Ctrl+V 로 즉시 로드됩니다.<br>상단에 이미지 URL을 입력하거나 로컬 파일을 선택할 수도 있습니다.</p>
+            <input type="file" id="fileInput" accept="image/*" class="file-hidden">
+            <div class="dropzone-btn-row">
+              <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 내 PC에서 파일 선택</button>
+              <button class="btn-secondary" id="btnPasteClipboard">📋 클립보드에서 붙여넣기</button>
+            </div>
+          </div>
+
+          <!-- Dual Side-by-Side View -->
+          <div class="dual-viewer-wrap hidden" id="dualViewerWrap">
+            <div class="view-column">
+              <div class="col-badge">원본 (Original)</div>
+              <div class="image-wrapper" id="origImgWrap">
+                <img id="origImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Original Banner">
+                <div class="overlay-boxes" id="overlayBoxes"></div>
+              </div>
+            </div>
+            <div class="view-column">
+              <div class="col-badge active-col">AI 변환 결과 (Output)</div>
+              <div class="image-wrapper" id="outputImgWrap">
+                <img id="outputImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Transformed Banner" class="hidden">
+                <div class="output-placeholder" id="outputPlaceholder">
+                  <div style="font-size: 28px; margin-bottom: 8px;">⚡</div>
+                  <p>상단의 <strong>[AI 변환 실행]</strong> 버튼을 누르면<br>고화질 변환 결과가 여기에 표시됩니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Live Canvas (For inline live editing) -->
+          <div class="canvas-viewer-wrap hidden" id="canvasViewerWrap">
+            <div class="col-badge active-col">실시간 인터랙티브 캔버스 (클릭/수정 즉시 반영)</div>
+            <div class="canvas-container" id="canvasContainer">
+              <canvas id="liveCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Single Image Views (Clean BG / OCR Vis) -->
+          <div class="single-viewer-wrap hidden" id="singleViewerWrap">
+            <div class="col-badge" id="singleViewBadge">PaddleOCR 바운딩 박스 검출 결과</div>
+            <div class="image-wrapper">
+              <img id="singleImg" src="examples/banner5_orig_ocr_detected.jpg" alt="Single View">
+            </div>
+          </div>
+
+          <!-- Loading Spinner Overlay -->
+          <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="spinner"></div>
+            <h4 id="loadingText">AI 엔진 처리 중...</h4>
+            <p id="loadingSub">PaddleOCR 검출 -> 번역 -> Big-LaMa 배경 복원</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Inspector & Inline Text Editor / JSON Viewer -->
+      <aside class="inspector-card glass-card">
+        <div class="card-header">
+          <div class="inspector-tab-group">
+            <button class="insp-tab active" id="tabTextEditor" data-target="editorView">텍스트 편집기</button>
+            <button class="insp-tab" id="tabJsonViewer" data-target="jsonView">{ } JSON 데이터</button>
+          </div>
+          <span class="badge-counter" id="itemCountBadge">0 Items</span>
+        </div>
+
+        <div class="card-body inspector-body">
+          <!-- Banner Summary Stats -->
+          <div class="banner-stat-bar" id="bannerStatBar">
+            <div class="stat-item">
+              <span class="stat-lbl">해상도</span>
+              <span class="stat-val" id="statDim">-</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-lbl">원본 언어</span>
+              <span class="stat-val" id="statLang">-</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-lbl">처리 시간</span>
+              <span class="stat-val" id="statLatency">-</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-lbl">모드 / 상태</span>
+              <span class="stat-val highlight" id="statWcag">READY</span>
+            </div>
+          </div>
+
+          <!-- Panel 1: Scrollable Item Editor List -->
+          <div class="items-list-wrap" id="itemsListWrap">
+            <div class="empty-state">
+              <div class="empty-icon">📝</div>
+              <p>배너를 업로드하고 변환을 실행하면<br>여기에 감지된 문구 목록과 실시간 편집기가 활성화됩니다.</p>
+            </div>
+          </div>
+
+          <!-- Panel 2: Dedicated JSON Viewer Panel (Active for Detect mode) -->
+          <div class="json-viewer-wrap hidden" id="jsonViewerWrap">
+            <div class="json-viewer-toolbar">
+              <span class="json-title">🔍 OCR Detect 정밀 데이터</span>
+              <div class="json-tools-btn-group">
+                <button id="btnFoldAllJson" class="btn-tool-sm" title="모든 항목 접기">[-] 전체 접기</button>
+                <button id="btnUnfoldAllJson" class="btn-tool-sm" title="모든 항목 펼치기">[+] 전체 펼치기</button>
+                <button id="btnCopyJson" class="btn-copy-sm" title="JSON 전체 클립보드 복사">📋 복사</button>
+              </div>
+            </div>
+            <div class="json-tree-container" id="jsonTreeContainer">
+              <div class="json-placeholder">// Detect 모드를 실행하면 감지된 모든 텍스트와 좌표가 접이식 JSON 트리로 표시됩니다.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Export Bar -->
+        <div class="card-footer">
+          <button id="btnDownloadJson" class="btn-action-secondary" disabled>
+            📄 JSON 메타데이터 받기
+          </button>
+          <button id="btnDownloadImage" class="btn-action-primary glow-btn" disabled>
+            💾 고해상도 완성본 저장
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="app.js?v=20260928_1635"></script>
+</body>
+</html>

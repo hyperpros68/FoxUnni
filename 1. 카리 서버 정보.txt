@@ -1,0 +1,10 @@
+  1. 카리 서버 정보 
+  - OS : Ubuntu 26.04
+  - 서버 IP: 58.229.196.86
+  - ssh port : 2222
+  - 접속정보 : gtwave / gtwave!@#$
+  - 서버 php root path : /home/gtwave/Project/FoxUnni/www
+  - 로칼 php root path : 
+  - 작업도구 : plink, pscp
+
+** 로칼에 작업중인 php서비스를 카리서버에 19990 포트로 php로 서비스 되게 해주고 핸드폰의 브라우져에서 보이게 해줘 

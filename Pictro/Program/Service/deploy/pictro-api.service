@@ -1,0 +1,16 @@
+[Unit]
+Description=Pictro Enterprise Commercial REST API Service (FastAPI)
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=mika
+WorkingDirectory=/home/mika/Project/ThrillRig/Program/Pictro/Service
+ExecStart=/home/mika/Project/ThrillRig/Program/VLM/venv/bin/python main.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/home/mika/Project/ThrillRig/Program/Pictro/logs/api_service.log
+StandardError=append:/home/mika/Project/ThrillRig/Program/Pictro/logs/api_service_err.log
+
+[Install]
+WantedBy=multi-user.target

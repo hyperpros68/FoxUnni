@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pictro - 슈퍼 관리자 통합 운영 관제 콘솔</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --card-bg: rgba(15, 20, 32, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-red: #ef4444;
+      --accent-rose: #f43f5e;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+      --accent-yellow: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(239, 68, 68, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+      font-family: 'Pretendard', sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Header */
+    .admin-header {
+      background: rgba(11, 15, 25, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .logo-badge {
+      background: linear-gradient(135deg, #ef4444, #991b1b);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+    .admin-tag {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn-portal {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .btn-portal:hover { color: #fff; }
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    /* Main Container */
+    .admin-main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Metric Cards Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+    }
+    .metric-card:hover { transform: translateY(-2px); }
+    .metric-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .icon-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .icon-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .icon-yellow { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .metric-info h4 {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .metric-val {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      color: #fff;
+    }
+
+    /* Table Section */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-count {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+    .btn-refresh {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: #cbd5e1;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-refresh:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+
+    /* Client Table */
+    .table-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow-x: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 14px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--card-border);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .company-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .company-title {
+      font-weight: 700;
+      color: #fff;
+    }
+    .company-id {
+      font-size: 12px;
+      color: #64748b;
+      font-family: monospace;
+    }
+    .contact-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Plan Select */
+    .select-plan {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+    .select-plan:focus { border-color: var(--accent-blue); }
+
+    /* Status Pills */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-active { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-paused { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* Action Buttons */
+    .btn-action-status {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action-status:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .btn-pause { border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+    .btn-pause:hover { background: rgba(239, 68, 68, 0.2); }
+    .btn-resume { border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+    .btn-resume:hover { background: rgba(16, 185, 129, 0.2); }
+
+    .role-badge {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="admin-header">
+    <div class="header-left">
+      <a href="admin_dashboard.html" class="brand-logo">
+        <span class="logo-badge">🛡️ SUPER ADMIN</span>
+        <span>PICTRO CONSOLE</span>
+      </a>
+      <span class="admin-tag">시스템 관제</span>
+    </div>
+    <div class="header-right">
+      <a href="gallery.html" class="btn-portal">🎨 사용자 포털 보기 ↗</a>
+      <a href="/pictro-api/docs" target="_blank" class="btn-portal">📑 Swagger UI ↗</a>
+      <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="admin-main">
+    
+    <!-- 4 Big Metric Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon icon-blue">🏢</div>
+        <div class="metric-info">
+          <h4>전체 가입 고객사</h4>
+          <div class="metric-val" id="metricTotalClients">-</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon icon-green">⚡</div>
+        <div class="metric-info">
+          <h4>오늘 AI 변환 건수</h4>
+          <div class="metric-val" id="metricTodayConversions">-</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon icon-purple">💳</div>
+        <div class="metric-info">
+          <h4>월 예상 매출 (MRR)</h4>
+          <div class="metric-val" id="metricMonthlyMrr">-</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon icon-yellow">💾</div>
+        <div class="metric-info">
+          <h4>총 스토리지 사용량</h4>
+          <div class="metric-val" id="metricTotalStorage">-</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clients Management Table -->
+    <div class="section-header">
+      <h3 class="section-title">
+        <span>고객사 계정 및 구독 관리</span>
+        <span class="badge-count" id="badgeClientsCount">0개사</span>
+      </h3>
+      <button class="btn-refresh" onclick="loadAllData()">
+        <span>🔄</span>
+        <span>새로고침</span>
+      </button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>업체명 / Client ID</th>
+            <th>담당자 연락처</th>
+            <th>구독 요금제 (플랜)</th>
+            <th>보관 배너수</th>
+            <th>스토리지 사용량</th>
+            <th>계정 상태</th>
+            <th>관리 제어</th>
+          </tr>
+        </thead>
+        <tbody id="clientsTableBody">
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+              고객사 목록을 불러오는 중입니다...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script>
+    const API_BASE = '/pictro-api/api/v1';
+    const ADMIN_KEY = localStorage.getItem('pictro_api_key') || 'FOXUNNI-PARTNER-MASTER-KEY-2026';
+
+    function getAuthHeaders() {
+      return { 'X-API-Key': ADMIN_KEY, 'Content-Type': 'application/json' };
+    }
+
+    // 1. 대시보드 지표 및 고객사 목록 동시 로드
+    async function loadAllData() {
+      try {
+        // 지표 조회
+        const resStats = await fetch(`${API_BASE}/admin/overview`, { headers: getAuthHeaders() });
+        if (resStats.status === 403) {
+          alert('슈퍼 관리자 권한이 없습니다. 관리자 로그인을 진행해 주세요.');
+          window.location.href = 'admin_login.html';
+          return;
+        }
+        const dataStats = await resStats.json();
+        if (dataStats.success) {
+          const m = dataStats.metrics;
+          document.getElementById('metricTotalClients').textContent = `${m.total_clients} 개사`;
+          document.getElementById('metricTodayConversions').textContent = `${m.today_conversions} 건`;
+          document.getElementById('metricMonthlyMrr').textContent = `₩ ${m.monthly_mrr.toLocaleString()}`;
+          document.getElementById('metricTotalStorage').textContent = `${m.total_storage_gb} GB`;
+        }
+
+        // 고객사 목록 조회
+        const resClients = await fetch(`${API_BASE}/admin/clients`, { headers: getAuthHeaders() });
+        const dataClients = await resClients.json();
+        if (dataClients.success) {
+          document.getElementById('badgeClientsCount').textContent = `${dataClients.count}개사`;
+          renderClientsTable(dataClients.clients);
+        }
+      } catch (err) {
+        console.error('Data load error:', err);
+      }
+    }
+
+    // 2. 고객사 목록 렌더링
+    function renderClientsTable(clients) {
+      const tbody = document.getElementById('clientsTableBody');
+      if (!clients || clients.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px;">등록된 고객사가 없습니다.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = clients.map(c => {
+        const isAdmin = c.role === 'ADMIN';
+        const roleHtml = isAdmin ? `<span class="role-badge">ADMIN</span>` : '';
+        const isPaused = c.status === 'PAUSED';
+
+        return `
+          <tr>
+            <td>
+              <div class="company-cell">
+                <span class="company-title">${c.company_name} ${roleHtml}</span>
+                <span class="company-id">${c.client_id}</span>
+              </div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <div>${c.manager_name}</div>
+                <div>${c.manager_email}</div>
+                <div>${c.manager_phone || '-'}</div>
+              </div>
+            </td>
+            <td>
+              <select class="select-plan" onchange="changeClientPlan('${c.client_id}', this.value)" ${isAdmin ? 'disabled' : ''}>
+                <option value="BASIC" ${c.plan_id === 'BASIC' ? 'selected' : ''}>Starter (10GB)</option>
+                <option value="PRO" ${c.plan_id === 'PRO' ? 'selected' : ''}>Business (50GB)</option>
+                <option value="ENTERPRISE" ${c.plan_id === 'ENTERPRISE' ? 'selected' : ''}>Enterprise (100GB)</option>
+                <option value="TEST" ${c.plan_id === 'TEST' ? 'selected' : ''}>Trial (체험용)</option>
+              </select>
+            </td>
+            <td>
+              <strong style="color: #60a5fa;">${c.active_banners}</strong> 장
+            </td>
+            <td>
+              <div>${c.used_mb} MB / ${c.max_gb} GB</div>
+              <div style="font-size:11px; color:#64748b; margin-top:2px;">
+                (${((c.used_mb / (c.max_gb * 1024)) * 100).toFixed(1)}%)
+              </div>
+            </td>
+            <td>
+              <span class="status-badge ${isPaused ? 'status-paused' : 'status-active'}">
+                ● ${c.status}
+              </span>
+            </td>
+            <td>
+              ${isAdmin ? '<span style="color:#64748b; font-size:12px;">마스터 계정</span>' : `
+                <button class="btn-action-status ${isPaused ? 'btn-resume' : 'btn-pause'}" 
+                        onclick="toggleClientStatus('${c.client_id}', '${isPaused ? 'ACTIVE' : 'PAUSED'}')">
+                  ${isPaused ? '정상 승인 (해제)' : '계정 일시정지'}
+                </button>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 3. 플랜 즉시 변경
+    async function changeClientPlan(clientId, newPlan) {
+      if (!confirm(`해당 고객사의 플랜을 [${newPlan}]으로 변경하시겠습니까?`)) {
+        loadAllData();
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/admin/clients/update-plan`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ client_id: clientId, plan_id: newPlan })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          loadAllData();
+        } else {
+          alert('플랜 변경 실패: ' + (data.detail || data.message));
+        }
+      } catch (err) {
+        alert('요청 오류: ' + err.message);
+      }
+    }
+
+    // 4. 계정 상태 토글 (정지/해제)
+    async function toggleClientStatus(clientId, nextStatus) {
+      const actionName = nextStatus === 'PAUSED' ? '일시정지(차단)' : '정상 활성화';
+      if (!confirm(`해당 업체를 [${actionName}] 상태로 변경하시겠습니까?`)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/clients/toggle-status`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ client_id: clientId, status: nextStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          loadAllData();
+        } else {
+          alert('상태 변경 실패: ' + (data.detail || data.message));
+        }
+      } catch (err) {
+        alert('요청 오류: ' + err.message);
+      }
+    }
+
+    function handleLogout() {
+      localStorage.clear();
+      window.location.href = 'admin_login.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAllData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pictro - My Gallery & Storage Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="gallery.css">
+</head>
+<body class="gallery-body">
+  <!-- Top Navigation -->
+  <header class="gallery-header">
+    <div class="header-left">
+      <a href="index.html" class="brand-logo" title="스튜디오로 돌아가기">
+        <span class="logo-accent">⚡ PICTRO</span> STUDIO
+      </a>
+      <span class="header-divider">/</span>
+      <span class="page-title">구독자 포털 (My Gallery)</span>
+    </div>
+    <div class="header-right">
+      <!-- Go to Studio Button -->
+      <a href="index.html" class="portal-switch-btn" style="display: inline-flex; align-items: center; gap: 7px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.45); color: #38bdf8; padding: 7px 15px; border-radius: 9px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 10px rgba(56, 189, 248, 0.15);" onmouseover="this.style.background='rgba(56, 189, 248, 0.28)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(56, 189, 248, 0.15)'; this.style.transform='translateY(0)';">
+        <span>🎨 1:1 변환 스튜디오 가기 ↗</span>
+      </a>
+
+      <a href="/pictro-api/guide" target="_blank" class="nav-link">📖 API 가이드</a>
+      <a href="/pictro-api/billing" target="_blank" class="nav-link">💳 플랜 및 정책</a>
+      <div class="user-chip" id="userChip">
+        <span class="company-badge" id="companyName">로딩 중...</span>
+        <span class="plan-pill" id="planName">BASIC</span>
+      </div>
+      <button onclick="localStorage.clear(); window.location.href='login.html';" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.15)'">로그아웃</button>
+    </div>
+  </header>
+
+  <!-- Storage Metering Banner -->
+  <section class="storage-meter-section">
+    <div class="meter-card">
+      <div class="meter-header">
+        <div class="meter-title-wrap">
+          <span class="meter-icon">💾</span>
+          <div>
+            <h3 class="meter-title">클라우드 스토리지 사용 현황</h3>
+            <p class="meter-subtitle">고화질 원본, LaMa 배경 복원, 다국어 치환 배너가 안전하게 영구 보관됩니다.</p>
+          </div>
+        </div>
+        <div class="meter-stat-text">
+          <span class="stat-highlight" id="usedHuman">0 MB</span>
+          <span class="stat-slash">/</span>
+          <span class="stat-total" id="maxHuman">1.0 GB</span>
+          <span class="stat-percent" id="pctBadge">0%</span>
+        </div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="storageProgressBar" style="width: 0%;"></div>
+      </div>
+      <div class="meter-footer">
+        <span class="warning-tip" id="storageWarningTip">💡 여유 공간이 충분합니다.</span>
+        <a href="/pictro-api/billing" class="btn-upgrade-mini">용량 업그레이드 ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Gallery Container -->
+  <main class="gallery-container">
+    <!-- Toolbar & Filter Tabs -->
+    <div class="gallery-toolbar">
+      <div class="tabs-group">
+        <button type="button" class="tab-btn active" id="tabActive">
+          📂 보관함 <span class="tab-badge" id="activeCount">0</span>
+        </button>
+        <button type="button" class="tab-btn" id="tabTrash">
+          🗑️ 휴지통 (30일 유예) <span class="tab-badge trash" id="trashCount">0</span>
+        </button>
+      </div>
+
+      <div class="actions-group">
+        <div class="search-input-wrap">
+          <input type="text" id="searchInput" placeholder="시술명, 단어, 파일명 검색..." />
+          <button type="button" id="btnSearch">🔍</button>
+        </div>
+        <button type="button" class="btn-action secondary" id="btnExportCsv" title="엑셀 CSV로 메타데이터 일괄 다운로드">
+          📥 엑셀(CSV) 내보내기
+        </button>
+        <button type="button" class="btn-action primary" id="btnBatchUploadModal">
+          ☁️ 대량 업로드 (최대 50장)
+        </button>
+      </div>
+    </div>
+
+    <!-- Batch Selection Action Bar (Sticky when selected) -->
+    <div class="batch-select-bar hidden" id="batchBar">
+      <div class="bar-left">
+        <input type="checkbox" id="selectAllCheckbox" />
+        <span id="selectedCountLabel">0개 선택됨</span>
+      </div>
+      <div class="bar-right">
+        <button type="button" class="btn-bar btn-restore hidden" id="btnBatchRestore">
+          ♻️ 선택 항목 복구
+        </button>
+        <button type="button" class="btn-bar btn-trash" id="btnBatchTrash">
+          🗑️ 휴지통으로 이동
+        </button>
+        <button type="button" class="btn-bar btn-purge hidden" id="btnBatchPurge">
+          ⚠️ 영구 삭제
+        </button>
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <section class="gallery-grid" id="galleryGrid">
+      <!-- Dynamic Item Cards -->
+      <div class="gallery-loading" id="galleryLoading">
+        <div class="spinner"></div>
+        <p>배너 보관함을 불러오는 중입니다...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Detail Compare Modal -->
+  <div class="modal-overlay hidden" id="detailModal">
+    <div class="modal-card detail-modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">배너 공정 상세 검토</h3>
+        <!-- View Mode Switcher -->
+        <div class="modal-view-tabs" style="display: flex; gap: 6px; background: rgba(0,0,0,0.4); padding: 3px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <button type="button" class="view-mode-btn active" data-mode="all" onclick="switchViewMode('all')">🖼️ 4단계 전주기 (4장)</button>
+          <button type="button" class="view-mode-btn" data-mode="compare" onclick="switchViewMode('compare')">✨ 1:1 비교 (2장)</button>
+          <button type="button" class="view-mode-btn" data-mode="clean" onclick="switchViewMode('clean')">🎨 AI 배경복원 (2장)</button>
+          <button type="button" class="view-mode-btn" data-mode="ocr" onclick="switchViewMode('ocr')">🔍 OCR 검출 (2장)</button>
+        </div>
+        <button type="button" class="btn-close" id="btnCloseDetail">✕</button>
+      </div>
+      <div class="modal-body detail-modal-body">
+        <div class="compare-view-row compare-view-4grid" id="compareGridRow">
+          <div class="compare-col" id="colOrig">
+            <span class="compare-label">① 원본 배너 (Original)</span>
+            <div class="img-preview-box">
+              <img id="detailOrigImg" src="" alt="원본">
+            </div>
+          </div>
+          <div class="compare-col" id="colVisual">
+            <span class="compare-label">② OCR 탐색 영역 (BBox)</span>
+            <div class="img-preview-box">
+              <img id="detailVisualImg" src="" alt="OCR 시각화">
+            </div>
+          </div>
+          <div class="compare-col" id="colClean">
+            <span class="compare-label">③ AI 배경 복원 (Clean BG)</span>
+            <div class="img-preview-box">
+              <img id="detailCleanImg" src="" alt="복원 배경">
+            </div>
+          </div>
+          <div class="compare-col" id="colTrans">
+            <span class="compare-label">④ 다국어 완성본 (<span id="detailLangLabel">EN</span>)</span>
+            <div class="img-preview-box highlight-box">
+              <img id="detailTransImg" src="" alt="치환본">
+            </div>
+          </div>
+        </div>
+        <div class="detail-info-row">
+          <div class="info-item">
+            <span class="info-k">추출 텍스트 요약</span>
+            <span class="info-v" id="detailSummary">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-k">대표 글자색</span>
+            <span class="info-v" id="detailColor">-</span>
+          </div>
+          <div class="info-item">
+            <span class="info-k">이미지 용량</span>
+            <span class="info-v" id="detailSize">-</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a id="btnDownloadOrig" href="#" download class="btn-action secondary">원본 다운로드</a>
+        <a id="btnDownloadClean" href="#" download class="btn-action secondary">AI 복원 배경 다운로드</a>
+        <a id="btnDownloadTrans" href="#" download class="btn-action primary">치환본 다운로드</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Upload Dropzone Modal -->
+  <div class="modal-overlay hidden" id="uploadModal">
+    <div class="modal-card upload-modal-card">
+      <div class="modal-header">
+        <h3>대량 배너 업로드 및 비동기 변환 (최대 50장)</h3>
+        <button type="button" class="btn-close" id="btnCloseUpload">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="upload-dropzone" id="batchDropzone">
+          <input type="file" id="batchFileInput" multiple accept="image/png,image/jpeg,image/webp" style="display: none;" />
+          <span class="dropzone-icon">📁</span>
+          <p class="dropzone-text">이미지 파일들을 여기에 드래그하거나 클릭하여 선택하세요.</p>
+          <span class="dropzone-sub">최대 50장 동시 업로드 지원 (JPG, PNG, WebP)</span>
+        </div>
+
+        <div class="batch-options-row">
+          <label>치환 언어 선택:
+            <select id="batchTargetLang">
+              <option value="en">영어 (English)</option>
+              <option value="ja">일본어 (日本語)</option>
+              <option value="zh">중국어 간체 (简体中文)</option>
+              <option value="vi">베트남어 (Tiếng Việt)</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- Progress List -->
+        <div class="upload-progress-wrap hidden" id="uploadProgressWrap">
+          <div class="upload-status-head">
+            <span id="uploadStatusText">변환 진행 중: 0 / 0</span>
+            <span id="uploadStatusPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" id="uploadProgressBar" style="width: 0%;"></div>
+          </div>
+          <div class="queue-file-list" id="queueFileList"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-action secondary" id="btnCancelUpload">닫기</button>
+        <button type="button" class="btn-action primary" id="btnStartBatchUpload">일괄 변환 시작</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="gallery.js"></script>
+</body>
+</html>

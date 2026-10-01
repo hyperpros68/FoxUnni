@@ -1,0 +1,213 @@
+{
+  "engine_info": {
+    "engine_name": "Pictro Enterprise Multimodal Pipeline",
+    "version": "2.0.0",
+    "processed_at": "2026-09-27T12:06:00",
+    "inpainting_engine": "Big-LaMa SOTA (PyTorch TorchScript)",
+    "ocr_engine": "PaddleOCR Multilingual DBNet",
+    "translation_engine": "DeepSeek-R1 (Local vLLM/Ollama)"
+  },
+  "image_info": {
+    "file_name": "banner6_orig.jpg",
+    "source_url": "https://img.alicdn.com/bao/uploaded/i2/2207786635569/O1CN01Z5Pn2pqXktH2vH2e_!!4611686018427384113-0-item_pic.jpg_460x460q90.jpg_.webp",
+    "width": 460,
+    "height": 460,
+    "aspect_ratio": "460:460 (1:1 Square)",
+    "total_pixels": 211600,
+    "format": "JPEG"
+  },
+  "translation_info": {
+    "detected_source_lang": "zh",
+    "detected_source_lang_name": "중국어 (간체/이커머스 배너)",
+    "target_lang": "ko",
+    "target_lang_name": "한국어 (쇼핑몰 상세 배너)",
+    "total_boxes_detected": 10,
+    "total_items_translated": 6
+  },
+  "items": [
+    {
+      "item_id": 0,
+      "semantic_analysis": {
+        "role": "MAIN_TITLE_HEADLINE",
+        "entity_type": "PRODUCT_NAME_CAMPAIGN",
+        "importance_level": "CRITICAL"
+      },
+      "source_text": "全新三丽鸥家族「手」护",
+      "translated_text": "신상 산리오 캐릭터스 「핸드」 케어",
+      "confidence_score": 0.998,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [76, 163, 108, 440],
+        "xywh": {"x": 163, "y": 76, "width": 277, "height": 32},
+        "aspect_ratio": 8.66,
+        "area_percentage": 4.19,
+        "angle_deg": 0.0,
+        "polygon": [[163, 76], [440, 76], [440, 108], [163, 108]]
+      },
+      "typography_style": {
+        "font_family": "malgunbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 30,
+        "letter_spacing_px": -0.5,
+        "alignment": "center",
+        "text_color_hex": "#D84A38",
+        "text_color_rgb": [216, 74, 56],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#EEF5F9",
+        "background_color_rgb": [238, 245, 249],
+        "contrast_ratio": "5.3:1",
+        "wcag_accessibility": "AA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 12,
+        "target_char_count": 21,
+        "expansion_ratio": 1.75
+      }
+    },
+    {
+      "item_id": 1,
+      "semantic_analysis": {
+        "role": "SUB_COPY_DESCRIPTION",
+        "entity_type": "MARKETING_BENEFIT",
+        "importance_level": "HIGH"
+      },
+      "source_text": "可爱萌趣 精致便携",
+      "translated_text": "사랑스러운 귀여움 · 간편한 휴대",
+      "confidence_score": 0.995,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [116, 186, 146, 416],
+        "xywh": {"x": 186, "y": 116, "width": 230, "height": 30},
+        "aspect_ratio": 7.67,
+        "area_percentage": 3.26,
+        "angle_deg": 0.0,
+        "polygon": [[186, 116], [416, 116], [416, 146], [186, 146]]
+      },
+      "typography_style": {
+        "font_family": "malgunbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 28,
+        "letter_spacing_px": -0.5,
+        "alignment": "center",
+        "text_color_hex": "#372D2D",
+        "text_color_rgb": [55, 45, 45],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#EEF5F9",
+        "background_color_rgb": [238, 245, 249],
+        "contrast_ratio": "10.8:1",
+        "wcag_accessibility": "AAA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 9,
+        "target_char_count": 18,
+        "expansion_ratio": 2.0
+      }
+    },
+    {
+      "item_id": 2,
+      "semantic_analysis": {
+        "role": "PROMOTION_DISCOUNT_BADGE",
+        "entity_type": "TRIAL_PRICE",
+        "importance_level": "HIGH"
+      },
+      "source_text": "¥4.9 试用",
+      "translated_text": "4.9위안 체험 (약 900원)",
+      "confidence_score": 0.989,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [199, 314, 218, 400],
+        "xywh": {"x": 314, "y": 199, "width": 86, "height": 19},
+        "aspect_ratio": 4.53,
+        "area_percentage": 0.77,
+        "angle_deg": 0.0,
+        "polygon": [[314, 199], [400, 199], [400, 218], [314, 218]]
+      },
+      "typography_style": {
+        "font_family": "malgunbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 18,
+        "letter_spacing_px": 0.0,
+        "alignment": "center",
+        "text_color_hex": "#D84A38",
+        "text_color_rgb": [216, 74, 56],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#FADCD8",
+        "background_color_rgb": [250, 220, 216],
+        "contrast_ratio": "4.6:1",
+        "wcag_accessibility": "AA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 6,
+        "target_char_count": 16,
+        "expansion_ratio": 2.67
+      }
+    },
+    {
+      "item_id": 5,
+      "semantic_analysis": {
+        "role": "PROMOTION_FOOTER_BANNER",
+        "entity_type": "GIFT_FREEBIE_CONDITION",
+        "importance_level": "CRITICAL"
+      },
+      "source_text": "30天内回购正装加赠「三丽鸥家族」手霜12g",
+      "translated_text": "30일 내 본품 재구매 시 「산리오 캐릭터스」 핸드크림 12g 추가 증정",
+      "confidence_score": 0.997,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [418, 13, 446, 448],
+        "xywh": {"x": 13, "y": 418, "width": 435, "height": 28},
+        "aspect_ratio": 15.54,
+        "area_percentage": 5.76,
+        "angle_deg": 0.0,
+        "polygon": [[13, 418], [448, 418], [448, 446], [13, 446]]
+      },
+      "typography_style": {
+        "font_family": "malgunbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 26,
+        "letter_spacing_px": -0.5,
+        "alignment": "center",
+        "text_color_hex": "#281E1E",
+        "text_color_rgb": [40, 30, 30],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#F8D5C2",
+        "background_color_rgb": [248, 213, 194],
+        "contrast_ratio": "11.4:1",
+        "wcag_accessibility": "AAA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 22,
+        "target_char_count": 42,
+        "expansion_ratio": 1.91
+      }
+    }
+  ]
+}

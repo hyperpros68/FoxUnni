@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThrillRig AI 마케팅 & OCR 통합 검수 포털</title>
+  <style>
+    :root {
+      --bg-dark: #0f1117;
+      --card-bg: rgba(26, 29, 39, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00d2ff;
+      --accent-purple: #9d4edd;
+      --accent-green: #00f076;
+      --accent-yellow: #ffd166;
+      --accent-red: #ff3366;
+      --text-main: #f0f3f6;
+      --text-sub: #8b949e;
+      --input-bg: #151821;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* 상단 네비게이션 */
+    header {
+      background: rgba(18, 20, 29, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    nav a {
+      color: var(--text-sub);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    nav a.active, nav a:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    /* 메인 컨테이너 */
+    main {
+      flex: 1;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 1800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* 상단 KPI 카드 */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent-cyan)), transparent);
+    }
+
+    .kpi-title {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 6px 0 2px;
+      color: var(--text-main);
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 검수 워크스페이스 (3단 분할) */
+    .workspace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+
+    .clinic-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .tag {
+      background: rgba(0, 210, 255, 0.12);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-header {
+      background: rgba(20, 23, 33, 0.9);
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .panel-body {
+      padding: 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    /* 이미지 프리뷰 */
+    .image-container {
+      width: 100%;
+      height: 520px;
+      background: #090a0f;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .banner-mock {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #1e1b2e, #13111f);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .banner-mock h2 {
+      font-size: 1.8rem;
+      color: #ffd166;
+      margin-bottom: 8px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .banner-mock .sub {
+      font-size: 1rem;
+      color: #e0e0e0;
+      margin-bottom: 20px;
+    }
+
+    .banner-mock .price-box {
+      background: #ff3366;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 30px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+    }
+
+    .banner-mock .cond {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 16px;
+    }
+
+    /* OCR 시각화 박스 오버레이 */
+    .box-overlay {
+      position: absolute;
+      border: 2px solid var(--accent-green);
+      background: rgba(0, 240, 118, 0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .box-overlay:hover {
+      background: rgba(0, 240, 118, 0.3);
+      border-color: #fff;
+    }
+
+    .box-tag {
+      position: absolute;
+      top: -20px;
+      left: -2px;
+      background: var(--accent-green);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    /* 데이터 편집 폼 */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.15);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .confidence-meter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--accent-green);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .meter-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      width: 99.8%;
+      height: 100%;
+      background: var(--accent-green);
+    }
+
+    /* 액션 버튼 */
+    .action-row {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .btn {
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-approve {
+      background: linear-gradient(135deg, #00d2ff, #00f076);
+      color: #0b101d;
+    }
+
+    .btn-approve:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0, 240, 118, 0.3);
+    }
+
+    .btn-retry {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .btn-retry:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* 하단 배너 네비게이터 */
+    .banner-queue {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .queue-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      white-space: nowrap;
+    }
+
+    .queue-items {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      flex: 1;
+    }
+
+    .queue-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 6px;
+      background: #191c28;
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #888;
+      text-align: center;
+      padding: 4px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .queue-thumb.active {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="brand">
+      <span class="brand-badge">ThrillRig</span>
+      <span>Aesthetic Marketing Intelligence</span>
+    </div>
+    <nav>
+      <a href="#" class="active">검수 센터 (Reviewer)</a>
+      <a href="#">배너 수집 현황</a>
+      <a href="#">시술 동의어 사전</a>
+      <a href="#">API 키 & 과금 관리</a>
+    </nav>
+    <div class="user-profile">
+      <span class="status-dot"></span>
+      <span>PaddleOCR Engine: 49990 ONLINE</span>
+      <span style="margin-left: 12px; font-weight: 700; color: #fff;">운영팀 김수석 (Admin)</span>
+    </div>
+  </header>
+
+  <!-- 메인 대시보드 -->
+  <main>
+    <!-- 상단 핵심 KPI -->
+    <div class="kpi-row">
+      <div class="kpi-card" style="--card-accent: #00d2ff;">
+        <div class="kpi-title">전국 수집 배너 총계</div>
+        <div class="kpi-val">12,450</div>
+        <div class="kpi-sub">↑ 오늘 신규 142건 자동 수집</div>
+      </div>
+      <div class="kpi-card" style="--card-accent: #00f076;">
+        <div class="kpi-title">OCR 평균 신뢰도 (Accuracy)</div>
+        <div class="kpi-val">99.82%</div>
+        <div class="kpi-sub">✓ 엔진: PaddleOCR Korean v2</div>
+      </div>
+      <div class="kpi-card" style="--card-accent: #ffd166;">
+        <div class="kpi-title">검수 대기 배너</div>
+        <div class="kpi-val">154 <span style="font-size:1rem; font-weight:400; color:var(--text-sub);">건</span></div>
+        <div class="kpi-sub" style="color: var(--accent-yellow);">⚡ 실시간 자동분석 진행 중</div>
+      </div>
+      <div class="kpi-card" style="--card-accent: #9d4edd;">
+        <div class="kpi-title">B2B API 호출 쿼터 현황</div>
+        <div class="kpi-val">85.4%</div>
+        <div class="kpi-sub" style="color: #c77dff;">17,080 / 20,000 건 사용</div>
+      </div>
+    </div>
+
+    <!-- 검수 바 정보 -->
+    <div class="workspace-header">
+      <div class="clinic-badge">
+        <span class="tag">서울 강남구</span>
+        <span>리뉴얼의원 강남본점</span>
+        <span style="color: var(--text-sub); font-size: 0.85rem; font-weight: normal;">| 배너 ID: #BN-20260926-0841 | 수집시각: 18:30:14</span>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600;">
+        상태: [자동추출 완료 - 운영자 승인 대기]
+      </div>
+    </div>
+
+    <!-- 3단 분할 검수 화면 -->
+    <div class="review-grid">
+      <!-- 1. 원본 이미지 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>[1] 원본 수집 배너 (Original)</span>
+          <span style="color: var(--text-sub); font-size: 0.75rem;">Zoom 100%</span>
+        </div>
+        <div class="panel-body">
+          <div class="image-container">
+            <div class="banner-mock">
+              <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 4px;">리뉴얼클리닉 9월 가을 프로모션</div>
+              <h2>슈링크 유니버스</h2>
+              <div class="sub">Ultra F Full Face 300샷</div>
+              <div class="price-box">99,000 원</div>
+              <div class="cond">※ 부가세 10% 별도 / 1인 1회 첫 방문 한정</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. OCR 박스 시각화 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>[2] OCR 판독 박스 시각화 (Detection Box)</span>
+          <span style="color: var(--accent-green); font-size: 0.75rem;">검출 4영역 / 신뢰도 99.8%</span>
+        </div>
+        <div class="panel-body">
+          <div class="image-container">
+            <div class="banner-mock">
+              <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 4px;">리뉴얼클리닉 9월 가을 프로모션</div>
+              <h2>슈링크 유니버스</h2>
+              <div class="sub">Ultra F Full Face 300샷</div>
+              <div class="price-box">99,000 원</div>
+              <div class="cond">※ 부가세 10% 별도 / 1인 1회 첫 방문 한정</div>
+
+              <!-- OCR Bounding Box 오버레이 -->
+              <div class="box-overlay" style="top: 155px; left: 60px; right: 60px; height: 50px;">
+                <div class="box-tag">시술명: 슈링크 유니버스 (99.9%)</div>
+              </div>
+              <div class="box-overlay" style="top: 215px; left: 90px; right: 90px; height: 35px; border-color: #00d2ff; background: rgba(0, 210, 255, 0.1);">
+                <div class="box-tag" style="background: #00d2ff;">옵션: 300샷 (99.8%)</div>
+              </div>
+              <div class="box-overlay" style="top: 260px; left: 110px; right: 110px; height: 55px; border-color: #ffd166; background: rgba(255, 209, 102, 0.1);">
+                <div class="box-tag" style="background: #ffd166;">가격: 99,000원 (99.9%)</div>
+              </div>
+              <div class="box-overlay" style="top: 335px; left: 40px; right: 40px; height: 30px; border-color: #ff3366; background: rgba(255, 51, 102, 0.1);">
+                <div class="box-tag" style="background: #ff3366;">부가세: 별도 (99.5%)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 파싱 데이터 수정 폼 -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>[3] 최종 파싱 상품 데이터 (DB 반영용)</span>
+          <span style="color: var(--accent-cyan); font-size: 0.75rem;">LLM 자동정제 완료</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label>병원명 (Clinic Name)</label>
+            <input type="text" class="form-control" value="리뉴얼의원 강남본점" readonly>
+          </div>
+          <div class="form-group">
+            <label>시술명 (표준화 코드 매핑)</label>
+            <input type="text" class="form-control" value="슈링크 유니버스">
+          </div>
+          <div class="row-2">
+            <div class="form-group">
+              <label>부위 (Target Area)</label>
+              <input type="text" class="form-control" value="풀페이스 (Full Face)">
+            </div>
+            <div class="form-group">
+              <label>용량 / 샷수</label>
+              <input type="text" class="form-control" value="300 샷">
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="form-group">
+              <label>정상 정가 (원)</label>
+              <input type="text" class="form-control" value="180,000">
+            </div>
+            <div class="form-group">
+              <label>이벤트 할인가 (원)</label>
+              <input type="text" class="form-control" style="color: var(--accent-green); font-weight: 800;" value="99,000">
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="form-group">
+              <label>부가세 여부</label>
+              <select class="form-control">
+                <option selected>부가세 10% 별도</option>
+                <option>부가세 포함</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>적용 조건</label>
+              <input type="text" class="form-control" value="첫 방문 한정 (1인 1회)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>AI 신뢰도 점수</label>
+            <div class="confidence-meter">
+              <div class="meter-bar">
+                <div class="meter-fill"></div>
+              </div>
+              <span>99.8%</span>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-approve" onclick="alert('데이터가 [여우언니] 마스터 DB에 최종 승인 반영되었습니다!')">
+              ✓ 승인 및 DB 확정 반영
+            </button>
+            <button class="btn btn-retry" onclick="alert('LLM 재분석 요청이 전송되었습니다.')">
+              재분석 요청
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 수집 큐 썸네일 바 -->
+    <div class="banner-queue">
+      <div class="queue-title">검수 대기 큐 (Queue)</div>
+      <div class="queue-items">
+        <div class="queue-thumb active">#0841<br>리뉴얼의원</div>
+        <div class="queue-thumb">#0842<br>바노바기</div>
+        <div class="queue-thumb">#0843<br>아이디병원</div>
+        <div class="queue-thumb">#0844<br>쁨클리닉</div>
+        <div class="queue-thumb">#0845<br>톡스앤필</div>
+        <div class="queue-thumb">#0846<br>뮤즈의원</div>
+        <div class="queue-thumb">#0847<br>오라클피부</div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

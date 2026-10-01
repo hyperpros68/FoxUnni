@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pictro - 개발자 연동 API 키 센터</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 24, 38, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
+      font-family: 'Pretendard', sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(14, 19, 31, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .brand-logo span { color: var(--accent-cyan); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active { color: #fff; }
+
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 36px 24px;
+    }
+    .page-title-area {
+      margin-bottom: 28px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .page-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .key-box-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .key-box-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .key-display-wrap {
+      display: flex;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      align-items: center;
+    }
+    .key-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #67e8f9;
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+    }
+    .btn-copy {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-copy:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
+
+    /* Metering Stats */
+    .quota-meter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .quota-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .quota-label { font-size: 12px; color: var(--text-muted); }
+    .quota-val { font-size: 20px; font-weight: 800; color: #fff; margin-top: 4px; font-family: 'Outfit', sans-serif; }
+
+    /* Code Snippet Box */
+    .code-box-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .code-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .code-tab {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .code-tab.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+    }
+    pre {
+      background: #06080e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="brand-logo">
+      <span>⚡ PICTRO</span> DEVELOPER
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🎨 1:1 스튜디오</a>
+      <a href="gallery.html" class="nav-link">📁 마이 갤러리</a>
+      <a href="api_center.html" class="nav-link active">🔑 API 키 센터</a>
+      <a href="/pictro-api/docs" target="_blank" class="nav-link">📑 Swagger API</a>
+      <button onclick="localStorage.clear(); window.location.href='login.html';" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color:#fca5a5; padding:6px 12px; border-radius:8px; font-size:12px; cursor:pointer;">로그아웃</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-title-area">
+      <h2 class="page-title">고객사 API 연동 센터</h2>
+      <p class="page-desc">자사몰, 예약 시스템, 마케팅 자동화 봇 등에 픽트로 실시간 AI 엔진을 연동하세요.</p>
+    </div>
+
+    <!-- API Key Display Box -->
+    <div class="key-box-card">
+      <div class="key-box-title">
+        <span>🔑</span>
+        <span>발급된 라이브(Live) API Key</span>
+      </div>
+      <div class="key-display-wrap">
+        <input type="text" id="apiKeyDisplay" class="key-input" readonly value="로딩 중...">
+        <button class="btn-copy" onclick="copyApiKey()">복사하기</button>
+      </div>
+
+      <div class="quota-meter-row">
+        <div class="quota-item">
+          <div class="quota-label">현재 구독 요금제</div>
+          <div class="quota-val" id="planLabel" style="color: #60a5fa;">BASIC</div>
+        </div>
+        <div class="quota-item">
+          <div class="quota-label">오늘 사용한 API 호출</div>
+          <div class="quota-val" id="todayCallsLabel">0 회</div>
+        </div>
+        <div class="quota-item">
+          <div class="quota-label">일일 잔여 호출 한도</div>
+          <div class="quota-val" id="remainingCallsLabel" style="color: #34d399;">500 회</div>
+        </div>
+        <div class="quota-item">
+          <div class="quota-label">보관 스토리지 용량</div>
+          <div class="quota-val" id="storageLabel">0 MB / 10 GB</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integration Code Examples -->
+    <div class="code-box-card">
+      <div class="key-box-title">
+        <span>💻</span>
+        <span>간편 연동 코드 예제</span>
+      </div>
+      <div class="code-tabs">
+        <div class="code-tab active" onclick="switchCode('python')">Python (requests)</div>
+        <div class="code-tab" onclick="switchCode('curl')">cURL</div>
+        <div class="code-tab" onclick="switchCode('js')">JavaScript (Node/Fetch)</div>
+      </div>
+
+      <pre id="codeSnippet"></pre>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = '/pictro-api/api/v1';
+    let currentApiKey = localStorage.getItem('pictro_api_key') || 'FOXUNNI-PARTNER-MASTER-KEY-2026';
+
+    async function loadUsage() {
+      document.getElementById('apiKeyDisplay').value = currentApiKey;
+      try {
+        const res = await fetch(`${API_BASE}/client/usage`, {
+          headers: { 'X-API-Key': currentApiKey }
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('planLabel').textContent = data.plan_name;
+          document.getElementById('todayCallsLabel').textContent = `${data.daily_calls.today_calls} 회`;
+          document.getElementById('remainingCallsLabel').textContent = `${data.daily_calls.remaining_calls} 회`;
+          const usedMb = Math.round((data.storage.used_bytes || 0) / (1024 * 1024));
+          const maxGb = Math.round((data.storage.max_bytes || 0) / (1024 ** 3));
+          document.getElementById('storageLabel').textContent = `${usedMb} MB / ${maxGb} GB`;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+      renderCode('python');
+    }
+
+    function copyApiKey() {
+      const el = document.getElementById('apiKeyDisplay');
+      el.select();
+      navigator.clipboard.writeText(el.value);
+      alert('API Key가 클립보드에 복사되었습니다.');
+    }
+
+    const snippets = {
+      python: (key) => `import requests
+
+url = "http://thrillrig.com:9990/pictro-api/api/v1/pictro/process"
+headers = {"X-API-Key": "${key}"}
+
+# 이미지 파일 및 변환 옵션 전송
+files = {"image": open("banner.jpg", "rb")}
+data = {
+    "mode": "trans",         # detect(영역검출), clean(배경복원), trans(다국어치환)
+    "target_lang": "en"       # en, ja, zh, vi, th
+}
+
+res = requests.post(url, headers=headers, files=files, data=data)
+print("완료 배너 URL:", res.json().get("translated_image_url"))`,
+
+      curl: (key) => `curl -X POST "http://thrillrig.com:9990/pictro-api/api/v1/pictro/process" \\
+  -H "X-API-Key: ${key}" \\
+  -F "image=@banner.jpg" \\
+  -F "mode=trans" \\
+  -F "target_lang=en"`,
+
+      js: (key) => `const formData = new FormData();
+formData.append('image', fileInput.files[0]);
+formData.append('mode', 'trans');
+formData.append('target_lang', 'en');
+
+const res = await fetch('http://thrillrig.com:9990/pictro-api/api/v1/pictro/process', {
+  method: 'POST',
+  headers: { 'X-API-Key': '${key}' },
+  body: formData
+});
+const data = await res.json();
+console.log('치환 완료 URL:', data.translated_image_url);`
+    };
+
+    function switchCode(type) {
+      document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      renderCode(type);
+    }
+
+    function renderCode(type) {
+      document.getElementById('codeSnippet').textContent = snippets[type](currentApiKey);
+    }
+
+    document.addEventListener('DOMContentLoaded', loadUsage);
+  </script>
+</body>
+</html>

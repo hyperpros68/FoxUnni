@@ -1,0 +1,32 @@
+공유기 세팅
+ - ID: admin
+   PW: AF463A_admin (또는 admin)
+     변경 : kari0817!!
+
+1. FoxUnni 서버 ubuntu 정보
+ - 외부 공인 IP(58.229.196.86)
+ - ssh port : 2222
+ - 접속정보 : gtwave / gtwave!@#$
+ - 외부 URL : http://58.229.196.86:19990/login.php
+ - 외부 URL : http://karicat.co.kr:19990/main.php
+ - 로컬에서 접속 : http://localhost:9001/
+ - TRService path : /home/gtwave/Project/FoxUnni
+ - local path : D:\Project\FoxUnni\www
+ - 작업도구 : plink, pscp
+
+B. 외부 시술정보 DB 서버 정보
+
+서버 IP : 203.245.30.46
+su - git-mediicon
+git ID : git-mediicon
+Password : medi7711@
+
+MySQL : root
+Password : medi7711@
+
+쇼핑몰 스키마 : shoppingmall
+사용 유저 : mediicon
+페스워드 : medi7711@
+
+ * Cafe24 에서 관리하는거라.... 3306 포트가 외부에서 접근이 안됩니다.
+ * 직접 서버로 들어가서 접속하면 확인이 가능합니다.

@@ -1,0 +1,23 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# 1. HTTP를 HTTPS로 강제 리다이렉트 (실서버 접속 시)
+# 로컬호스트(localhost, 127.0.0.1, 192.168.x.x)가 아닐 때만 작동하도록 예외 처리
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1|192\.168\.[0-9]+\.[0-9]+)$ [NC]
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. www가 없는 도메인을 www가 있는 도메인으로 통일 (SEO 최적화)
+# 원치 않으시면 아래 2줄을 주석 처리하세요.
+# RewriteCond %{HTTP_HOST} ^yourdomain\.com [NC]
+# RewriteRule ^(.*)$ https://www.yourdomain.com/$1 [L,R=301]
+
+# 3. 디렉토리 리스팅 방지 (보안)
+Options -Indexes
+</IfModule>
+
+# PHP 설정 오버라이드 (호스팅 환경에 따라 안 먹힐 수 있음)
+<IfModule mod_php.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 25M
+</IfModule>

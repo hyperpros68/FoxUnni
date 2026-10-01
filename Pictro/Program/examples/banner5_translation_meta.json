@@ -1,0 +1,304 @@
+{
+  "engine_info": {
+    "engine_name": "Pictro Enterprise Multimodal Pipeline",
+    "version": "2.0.0",
+    "processed_at": "2026-09-27T12:06:00",
+    "inpainting_engine": "Big-LaMa SOTA (PyTorch TorchScript)",
+    "ocr_engine": "PaddleOCR Multilingual DBNet",
+    "translation_engine": "DeepSeek-R1 (Local vLLM/Ollama)"
+  },
+  "image_info": {
+    "file_name": "banner5_orig.jpg",
+    "width": 800,
+    "height": 800,
+    "aspect_ratio": "800:800 (1:1 Square)",
+    "total_pixels": 640000,
+    "format": "JPEG"
+  },
+  "translation_info": {
+    "detected_source_lang": "ko",
+    "detected_source_lang_name": "한국어 (의료/성형외과 광고 배너)",
+    "target_lang": "en",
+    "target_lang_name": "영어 (글로벌 타겟팅 배너)",
+    "total_boxes_detected": 13,
+    "total_items_translated": 6
+  },
+  "items": [
+    {
+      "item_id": 0,
+      "semantic_analysis": {
+        "role": "BRAND_LOGO_HEADER",
+        "entity_type": "CLINIC_BRAND_NAME",
+        "importance_level": "HIGH"
+      },
+      "source_text": "ANOTHER",
+      "translated_text": "ANOTHER",
+      "confidence_score": 0.996,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [35, 37, 72, 196],
+        "xywh": {"x": 37, "y": 35, "width": 159, "height": 37},
+        "aspect_ratio": 4.3,
+        "area_percentage": 0.92,
+        "angle_deg": 0.0,
+        "polygon": [[37, 35], [196, 35], [196, 72], [37, 72]]
+      },
+      "typography_style": {
+        "font_family": "arialbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 35,
+        "letter_spacing_px": -0.5,
+        "alignment": "center",
+        "text_color_hex": "#FFFFFF",
+        "text_color_rgb": [255, 255, 255],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#8FA396",
+        "background_color_rgb": [143, 163, 150],
+        "contrast_ratio": "4.8:1",
+        "wcag_accessibility": "AA_PASS",
+        "is_light_text": true
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 7,
+        "target_char_count": 7,
+        "expansion_ratio": 1.0
+      }
+    },
+    {
+      "item_id": 1,
+      "semantic_analysis": {
+        "role": "SUB_BRAND_TAGLINE",
+        "entity_type": "MEDICAL_SPECIALTY",
+        "importance_level": "MEDIUM"
+      },
+      "source_text": "PLASIC SURGERX",
+      "translated_text": "PLASTIC SURGERY",
+      "confidence_score": 0.768,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [76, 57, 89, 175],
+        "xywh": {"x": 57, "y": 76, "width": 118, "height": 13},
+        "aspect_ratio": 9.08,
+        "area_percentage": 0.24,
+        "angle_deg": 0.0,
+        "polygon": [[57, 76], [175, 76], [175, 89], [57, 89]]
+      },
+      "typography_style": {
+        "font_family": "arialbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 12,
+        "letter_spacing_px": 0.0,
+        "alignment": "center",
+        "text_color_hex": "#D1D5DB",
+        "text_color_rgb": [209, 213, 219],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#9BAEA2",
+        "background_color_rgb": [155, 174, 162],
+        "contrast_ratio": "3.5:1",
+        "wcag_accessibility": "AA_LARGE_ONLY",
+        "is_light_text": true
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical (Typo Auto-Corrected)",
+        "source_char_count": 14,
+        "target_char_count": 15,
+        "expansion_ratio": 1.07
+      }
+    },
+    {
+      "item_id": 2,
+      "semantic_analysis": {
+        "role": "PROMOTIONAL_BENEFIT_HOOK",
+        "entity_type": "CLINICAL_ADVANTAGE",
+        "importance_level": "HIGH"
+      },
+      "source_text": "코부터 인중까지 맞춤각도로최적화!",
+      "translated_text": "Custom Fit From Nose To Chin!",
+      "confidence_score": 1.0,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [289, 50, 366, 360],
+        "xywh": {"x": 50, "y": 289, "width": 310, "height": 77},
+        "aspect_ratio": 4.03,
+        "area_percentage": 3.73,
+        "angle_deg": 0.0,
+        "polygon": [[50, 289], [360, 289], [360, 366], [50, 366]]
+      },
+      "typography_style": {
+        "font_family": "arialbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 28,
+        "letter_spacing_px": -0.5,
+        "alignment": "center",
+        "text_color_hex": "#374151",
+        "text_color_rgb": [55, 65, 81],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#E3E9E4",
+        "background_color_rgb": [227, 233, 228],
+        "contrast_ratio": "8.9:1",
+        "wcag_accessibility": "AAA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 18,
+        "target_char_count": 29,
+        "expansion_ratio": 1.61
+      }
+    },
+    {
+      "item_id": 3,
+      "semantic_analysis": {
+        "role": "MAIN_TITLE_HEADLINE",
+        "entity_type": "SURGERY_PROCEDURE_NAME",
+        "importance_level": "CRITICAL"
+      },
+      "source_text": "비순각 코재수술",
+      "translated_text": "Nasolabial Angle Rhinoplasty",
+      "confidence_score": 0.998,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [568, 52, 798, 436],
+        "xywh": {"x": 52, "y": 568, "width": 384, "height": 230},
+        "aspect_ratio": 1.67,
+        "area_percentage": 13.8,
+        "angle_deg": 0.0,
+        "polygon": [[52, 568], [436, 568], [436, 798], [52, 798]]
+      },
+      "typography_style": {
+        "font_family": "arialbd.ttf",
+        "font_weight": "Bold 700",
+        "font_size_px": 72,
+        "letter_spacing_px": -1.0,
+        "alignment": "center",
+        "text_color_hex": "#2F6B56",
+        "text_color_rgb": [47, 107, 86],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#E5EBE6",
+        "background_color_rgb": [229, 235, 230],
+        "contrast_ratio": "5.6:1",
+        "wcag_accessibility": "AA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 8,
+        "target_char_count": 28,
+        "expansion_ratio": 3.5
+      }
+    },
+    {
+      "item_id": 4,
+      "semantic_analysis": {
+        "role": "PRICE_HERO",
+        "entity_type": "NUMERIC_PRICE",
+        "importance_level": "CRITICAL"
+      },
+      "source_text": "50",
+      "translated_text": "50",
+      "confidence_score": 0.999,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [595, 508, 836, 755],
+        "xywh": {"x": 508, "y": 595, "width": 247, "height": 241},
+        "aspect_ratio": 1.02,
+        "area_percentage": 9.3,
+        "angle_deg": 0.0,
+        "polygon": [[508, 595], [755, 595], [755, 836], [508, 836]]
+      },
+      "typography_style": {
+        "font_family": "arialbd.ttf",
+        "font_weight": "ExtraBold 800",
+        "font_size_px": 230,
+        "letter_spacing_px": -3.0,
+        "alignment": "center",
+        "text_color_hex": "#2F6B56",
+        "text_color_rgb": [47, 107, 86],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#E3E9E4",
+        "background_color_rgb": [227, 233, 228],
+        "contrast_ratio": "5.6:1",
+        "wcag_accessibility": "AA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 2,
+        "target_char_count": 2,
+        "expansion_ratio": 1.0
+      }
+    },
+    {
+      "item_id": 5,
+      "semantic_analysis": {
+        "role": "CONDITION_DISCLAIMER",
+        "entity_type": "TAX_VAT_INFO",
+        "importance_level": "LOW"
+      },
+      "source_text": "VAT포함",
+      "translated_text": "VAT Included",
+      "confidence_score": 0.985,
+      "bounding_box": {
+        "ymin_xmin_ymax_xmax": [757, 758, 780, 843],
+        "xywh": {"x": 758, "y": 757, "width": 85, "height": 23},
+        "aspect_ratio": 3.7,
+        "area_percentage": 0.31,
+        "angle_deg": 0.0,
+        "polygon": [[758, 757], [843, 757], [843, 780], [758, 780]]
+      },
+      "typography_style": {
+        "font_family": "arial.ttf",
+        "font_weight": "Regular 400",
+        "font_size_px": 18,
+        "letter_spacing_px": 0.0,
+        "alignment": "center",
+        "text_color_hex": "#4B5563",
+        "text_color_rgb": [75, 85, 99],
+        "stroke_width": 0,
+        "shadow": {
+          "has_shadow": false,
+          "offset": [0, 0]
+        }
+      },
+      "color_contrast_analysis": {
+        "background_color_hex": "#E6ECE7",
+        "background_color_rgb": [230, 236, 231],
+        "contrast_ratio": "7.8:1",
+        "wcag_accessibility": "AAA_PASS",
+        "is_light_text": false
+      },
+      "translation_metrics": {
+        "engine": "deepseek-r1:8b-medical",
+        "source_char_count": 5,
+        "target_char_count": 12,
+        "expansion_ratio": 2.4
+      }
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+================================================================================
+■ 픽트로 (Pictro) 브랜드 정의 및 이름 뜻
+================================================================================
+1. Picture (이미지/배너) + Transform / Translate (변환/치환/다국어 번역)
+   - "이미지(Picture) 속 모든 텍스트를 읽고(OCR), 지우고(Inpaint), 글로벌 다국어로 탈바꿈(Transform)시킨다"는 의미
+2. Pict (그림) + Pro / Maestro (전문가/마에스트로)
+   - 단순 OCR을 넘어 이미지 복원과 고품질 타이포그래피 합성을 최고 수준(Pro)으로 지휘하는 AI 멀티모달 플랫폼
+--------------------------------------------------------------------------------
+* 픽트로 엔진 test url : http://thrillrig.com:9990/pictro/
+* 픽트로 REST API test url : http://thrillrig.com:9990/pictro-api/docs (Swagger UI)
+* 픽트로 REST API guide url : http://thrillrig.com:9990/pictro-api/guide
+* 픽트로 REST API billing url : http://thrillrig.com:9990/pictro-api/billing
+* 픽트로 테스트 API Key : FOXUNNI-PARTNER-MASTER-KEY-2026 (체험용 일일 10회 호출 제한)
+* 픽트로 공식 Trial Key : PICTRO-TRIAL-TEST-KEY-2026 (체험용 일일 10회 호출 제한)
+--------------------------------------------------------------------------------
+
+  A. 신규 통합 서버 정보 (TRService / TRBrain / DB / eJabberd)
+  - OS : Ubuntu 26.04
+  - 서버 IP : thrillrig.com (Port: 22 / IP: 115.21.37.119)
+  - ID : mika
+  - PW : mika!@#$
+  - TRService path : /home/mika/Project/ThrillRig/Program/TRService 
+    * URL : http://thrillrig.com:9990 (접속계정: admin / esg!@#$, manager01 / trmgr!@#$, test99 / trshop!@#$)
+  - TRBrain path   : /home/mika/Project/ThrillRig/Program/TRBrain 
+    * URL : https://thrillrig.com:19990 (접속계정: admin / esg!@#$ 또는 brain@thrillrig.com / mika!@#$)
+  - VLM path       : /home/mika/Project/ThrillRig/Program/VLM
+    * URL : http://thrillrig.com:29990 (ChatGPT + FLUX.1 이미지 생성 Studio)
+  - LLM path       : /home/mika/Project/ThrillRig/Program/LLM
+    * 모델 : DeepSeek-R1-Distill-Qwen-14B (deepseek-r1:14b)
+    * URL : http://thrillrig.com:39990 (OpenAI 호환 API 게이트웨이 & 웹 UI)
+    * API Key : tr-llm-key-2026-thrillrig
+    * 엔드포인트 : POST http://thrillrig.com:39990/v1/chat/completions
+  - TRKiosk DDNS & 터널 중계 (사설망 매장 키오스크 외부 접속):
+    * 키오스크 모바일 접속 URL : http://thrillrig.com:9990/kiosk/{shop_code} (예: http://thrillrig.com:9990/kiosk/test99)
+    * DDNS API 엔드포인트 : http://thrillrig.com:9990/api/kiosk_ddns.php (Heartbeat 및 공인IP/상태 갱신)
+    * DDNS 상태 저장 파일 : /home/mika/Project/ThrillRig/Program/TRService/www/api/ddns_status.json
+    * SSH 리버스 터널 포트 : 15000 + 매장번호 (shop01 -> 15001, shop02 -> 15002, shop03 -> 15003 ...)
+    * Nginx 프록시 설정 : /etc/nginx/sites-available/thrillrig (WebSocket 및 터널 포트 프록시 중계)
+
+  - 작업도구 : plink, pscp
+
+  B. DB Server 구축 (MySQL / MariaDB)
+  - 서버 DB 접속 : IP: thrillrig.com (3306)
+  - Database : Pictro
+  - DDL 파일 : Pictro\Program\Database\pictro.ddl
+  - DB 계정 : ID: pictro / PW: pictro!@#$
+  - Local PC MySQL Workbench 및  / ID: pictro / PW: pictro!@#$
+
+  C. OCR Server 구축 (OCR / tesseract)
+  - Server IP : thrillrig.com (Port: 22 / IP: 115.21.37.119)
+  - ID : mika
+  - PW : mika!@#$
+  - OCR path : /home/mika/Project/ThrillRig/Program/OCR
+    * OCR Script : /home/mika/Project/ThrillRig/Program/OCR/OCR_image.py
+
+  D. 번역 Service 서버 구축 (ESG 서버 파악 상세 및 자원 현황)
+  - 서버 IP : 125.129.99.198 (NVIDIA GeForce RTX 4090, 24GB VRAM)
+  - OS : Ubuntu
+  - ID : esg
+  - PW : esg!@#$
+  - GPU 및 Ollama 현황 :
+    * 총 24GB VRAM 중 약 10.3GB 점유 (14GB 여유)
+    * Ollama 엔진 (포트: 11434) -> qwen2.5:14b 상주 (VRAM 9.7GB, 100% GPU)
+  - 기존 바카라 실시간 서비스 운영 현황 :
+    * rag-server : /home/esg/Project/Baccarat/rag_server (포트 9900 aggregator:app 상시 구동)
+      $ local path : C:\Project\Bacara\Program\Baccarat\server
+    * BegaBet service : /home/esg/Project/Baccarat/BegaBet
+      * 접속정보 : admin / 8888
+      * local path : C:\Project\Bacara\Program\Baccarat\BegaBet
+    * 외부 IP(218.39.206.147, 218.38.24.73)에서 바카라 실시간 판정용으로 4090 Ollama를 수 초 간격 호출 중
+  - 바카라 서비스 보호용 안전 락(Lock) 격리 체계 :
+    * 픽트로 번역 호출 시 Python 글로벌 threading.Lock(_GPU_TRANSLATION_LOCK) 적용 (Concurrency=1)
+    * 번역 1건당 단 1.05초만 일시 사용 후 즉시 반환하여 바카라 실시간 레이턴시에 영향 ZERO 달성
+  - 작업도구 : plink, pscp
+
+  E. 픽트로(Pictro) 엔진 3대 모듈 옵션 및 다중 입력 지원 규격
+  1. 동작 옵션 (mode):
+     - mode="detect" : [1단계] 텍스트 및 바운딩 박스 검출만 수행 (OCR 탐색/분석 모드, 약 3~4초)
+       * 산출물: {파일명}_ocr_detected.jpg (박스 시각화), {파일명}_detect_meta.json
+     - mode="clear"  : [1+3단계] 글자 제거 및 깨끗한 배경 복원만 수행 (배경 템플릿 추출 모드, 약 4~5초)
+       * 산출물: {파일명}_clean_bg.jpg (순수 배경 복원), {파일명}_clear_meta.json
+     - mode="trans"  : [1+2+3+4단계] 검출 -> 4090 번역 -> 배경 복원 -> 1:1 폰트 치환 (풀코스 번역 모드, 약 6~7초)
+       * 산출물: {파일명}_clean_bg.jpg, {파일명}_translated_{lang}.jpg, {파일명}_translation_meta.json
+  2. 다중 입력 포맷 완벽 지원:
+     - 로컬 파일 경로 (d:\... 또는 /home/...) 지원
+     - 원격 웹 이미지 URL (http://, https://) 입력 시 User-Agent 및 SSL 바이패스를 통한 고유 MD5 해시 캐싱 다운로드 후 자동 변환 지원
+  3. 안전 멀티 배치 아키텍처:
+     - Mika 서버 : 비전 인페인팅 및 OCR은 max_workers=2로 동시 병렬 실행 (메모리/확률 LLM 완전 보호)
+     - ESG 4090  : 번역 시 Concurrency=1 단일 락으로 순차 진입 (바카라 실시간 분석 무영향 보장)
+
+  F. 픽트로 스튜디오 (Pictro Studio) 상용 웹 콘솔 및 실시간 서비스 연동 규격
+  - 엔진 test url : http://thrillrig.com:9990/pictro/
+  1. Mika 서버 실시간 서비스 접속 정보:
+     - 엔진 test url : http://thrillrig.com:9990/pictro/ (Nginx 포트 9990 직결로 외부 포트포워딩 이슈 없이 즉시 접속 가능)
+     - REST API test url : http://thrillrig.com:9990/pictro-api/docs (Swagger UI)
+     - 백엔드 브릿지 API : http://thrillrig.com:9990/api/pictro_process.php
+     - 소스 위치 : /home/mika/Project/ThrillRig/Program/Pictro/App/web/ (index.html, style.css, app.js)
+  2. 다중 이미지 입력 완벽 지원:
+     - [마우스 드래그 앤 드롭] : PC 탐색기에서 이미지를 끌어다 놓으면 즉시 업로드 및 뷰어 로드
+     - [클립보드 붙여넣기 (Ctrl+C, Ctrl+V)] : 캡처 도구(Win+Shift+S)로 캡처한 이미지나 복사한 이미지를 웹 화면 어디서든 Ctrl+V 로 누르면 0.1초 만에 자동 로드
+     - [원격 웹 이미지 URL] : 웹 배너 이미지 주소(http://, https://) 입력 시 즉시 캐싱 다운로드 및 분석
+     - [업로드 직후 클린 뷰 & 변환 대기 규격] : 새 이미지를 붙여넣었을 때 아직 [AI 변환 실행]을 누르지 않은 상태이므로:
+       * 좌측 "원본 (Original)"에만 깨끗한 순수 원본 이미지가 표시되고 바운딩 박스는 완전히 제거됨
+       * 우측 "AI 변환 결과 (Output)"는 아직 변환 전이므로 사진이 뜨지 않고 '⚡ 상단의 [AI 변환 실행]을 누르면 결과가 표시됩니다' 플레이스홀더 대기 화면 표시
+       * 우측 인스펙터 및 다운로드 버튼도 '변환 대기 (READY)' 상태로 초기화되어 사용자 혼선 원천 차단
+  3. Detect (OCR 탐색) 모드 시 정밀 접이식 JSON 트리 뷰어 UI:
+     - 상단에서 'Detect (OCR 탐색)' 옵션 선택 후 [AI 변환 실행] 클릭 시:
+       * 우측 인스펙터 패널에 '{ } JSON 데이터' 뷰어 탭이 자동으로 열림
+       * [접었다 폈다(Collapsible) 트리 뷰] : 각 아이템 좌측의 '[-]' 사각형 버튼을 누르면 해당 아이템이 한 줄({ ... #1 "ANOTHER" (0.99) ... })로 접히며 '[+]'로 변경되고, 다시 누르면 세부 좌표가 펼쳐짐 (마우스 클릭 편의성 극대화)
+       * [원클릭 툴바] : 상단에 '[-] 전체 접기', '[+] 전체 펼치기' 버튼을 제공하여 13개 전체 아이템을 한 번에 접거나 펼칠 수 있음
+       * 감지된 모든 텍스트, 바운딩 박스(ymin, xmin, ymax, xmax), 신뢰도(Confidence), 역할(role), 폰트 스타일이 구문 강조 컬러링되어 출력
+       * [📋 복사] 버튼 클릭 시 접혀 있는 상태와 관계없이 완전한 전체 원본 JSON이 클립보드에 100% 복사됨
+       * [📄 JSON 메타데이터 받기] 버튼으로 표준 .json 파일 다운로드 지원
+  4. 실시간 인터랙티브 캔버스 폰트 편집 (Live Canvas Engine):
+     - 우측 텍스트 목록에서 문구를 직접 수정하거나 색상(컬러피커), 폰트 크기 변경 시 좌측 캔버스에 실시간 재렌더링
+
+
+
+0. DB는 schemetic을 Hammer해서 Table들을 만듬
+1. 전국에 피부, 성형등 미용에 관련된 의원들의 리스트
+2. 각의원의 site의 정보로 광고를 하는 상품들의 리스트와 이미지 정보등을 얻어서 DB에 저장
+3. 서버에 OCR을 이용해서 가가 의원의 상품을 제대로 파악해서 DB에 저장.
+4. 파악된 정보는 주기적으로 update된지 체크하고 update, delete를 해야 함
+
+** Mika
+
+================================================================================
+[전국 피부·성형 시술 이벤트 자동 수집 및 OCR DB 구축 서비스 개발 계획서]
+================================================================================
+
+1. 서비스 개요 및 목적
+   - 전국 피부/성형외과의 공식 웹사이트 및 이벤트 페이지를 주기적으로 탐색하여,
+     광고 배너/이벤트 이미지 속 시술 정보(시술명, 샷수, 용량, 정가, 할인가, 조건)를
+     PaddleOCR(49990)과 DeepSeek LLM(39990)으로 자동 추출·정규화하여 DB 구축
+   - 원본 이미지 vs OCR 시각화 이미지를 1:1로 비교 검증할 수 있는 관리자 포털 및
+     여우언니/외부 연동용 REST API 체계 구축
+
+2. 시스템 아키텍처 및 파이프라인
+   [1단계: 병원 마스터] 심평원(HIRA) 공공데이터 API 기반 전국 의원 마스터 리스트 확보
+   [2단계: 웹 수집/저장] Playwright/Scrapy 크롤러가 배너 다운로드 및 해시 중복제거 보관
+   [3단계: OCR/LLM 정제] PaddleOCR(49990) 글자/좌표 추출 -> DeepSeek LLM(39990) 구조화 JSON 변환
+   [4단계: 비교 검수/서빙] 관리자 3단 뷰어에서 검증 및 Service API 서빙, 주기적 동기화(Update/Delete)
+
+3. 이미지 저장 위치 및 스토리지 구조
+   - 물리 경로: /home/mika/Project/ThrillRig/Program/OCR/storage/
+     * 원본 이미지 : storage/raw/{YYYY}/{MM}/{clinic_id}/{hash}.jpg
+     * OCR 박스 이미지 : storage/visualized/{YYYY}/{MM}/{clinic_id}/{hash}_boxed.jpg
+     * 관리자 썸네일 : storage/thumbnails/{YYYY}/{MM}/{clinic_id}/{hash}_thumb.jpg
+   - 정적 웹 서빙 URL: http://thrillrig.com:49990/storage/raw/...
+
+4. 관리자 페이지 (Admin Portal) 서비스 방식
+   - 관리자 접속 URL : http://thrillrig.com:49990/admin
+   - 구동 방식 :
+     * OCR FastAPI 서버(포트: 49990) 내에 /admin 정적 웹을 마운트하여 원클릭 일체형 구동
+     * 동일 포트 사용으로 CORS 보안 차단 문제 원천 제거 및 이미지 초고속 로딩
+     * 향후 상용 보안 적용 시 Nginx 프록시(https://thrillrig.com/marketing_admin) 연동
+   - 화면 구성 및 검수 시나리오 :
+     * [1] 종합 대시보드 : 당일 수집 배너 수, OCR 성공률, 이상 최저가 알림 피드
+     * [2] 3단 비교 검수 뷰어 :
+           [좌] 원본 배너 이미지 (마우스 휠 동기화 확대/축소)
+           [중] 초록/노란색 OCR 검출 박스 시각화 이미지 (박스 클릭 시 텍스트 복사)
+           [우] 시술명, 샷수, 가격, 부가세 여부 입력/수정 폼
+     * [3] 원클릭 확정 : 육안 대조 후 [승인] 클릭 시 여우언니 마스터 DB에 CONFIRMED 반영
+     * [4] 시술 표준화(동의어) 사전 관리 : '슈링크 Uni', '슈링크 2세대' -> '슈링크 유니버스' 매핑
+
+5. 서비스 서버 RESTful API 및 과금 체계
+   - GET  /api/v1/clinics              : 지역별/과목별 병원 목록 및 필터링 검색
+   - GET  /api/v1/clinics/{id}/banners : 해당 병원의 활성 이벤트 배너(원본/시각화URL)
+   - GET  /api/v1/products/search      : 시술명, 부위, 가격대별 최저가/평균가 비교 검색
+   - GET  /api/v1/products/lowest      : 실시간 최저가 랭킹 (Redis 10분 캐싱)
+   - POST /api/v1/ocr/analyze-banner   : 단건 배너 즉시 분석 요청 (B2B/제휴사용)
+   - POST /ocr/visualize               : [유료 외부제공] 이미지 전송 시 [텍스트+박스 시각화이미지(URL/Base64)] 반환
+     * 파라미터 : return_type(url/base64), box_color, line_width, show_text, show_confidence
+     * 보안/과금 : X-API-Key 인증, 일일 쿼터(daily_quota) 차감, 24시간 초과 임시 파일 자동삭제 Cron
+     * 안정화   : 긴 배너 1920px 자동 리사이징(타임아웃 방지)
+
+6. API 사용자 등록, 3단계 구독 플랜 및 저장·변환 용량 DB 설계
+   - api_plan_tier      : 3단계 구독 플랜 (Starter 1GB/50GB 트래픽, Business 10GB/300GB 트래픽, Pro 100GB/1TB 트래픽 / 초과시 GB당 종량 과금)
+   - api_client_user    : 회원/고객사 정보 (회사명, 이메일, 플랜ID, current_storage_bytes, monthly_used_traffic_bytes, hard_limit_bytes, 상태)
+   - user_ocr_history   : 사용자별 OCR 사진 아카이브 (WebP원본/시각화경로, 이미지용량, 추출JSON, is_deleted, deleted_at)
+   - user_folder_master : 사용자별 캠페인/이벤트 폴더 관리 (folder_id, client_id, folder_name)
+   - api_key_master     : 발급된 API Key (32자리 Hash, 허용IP, 분당요청한도, 만료일)
+   - api_usage_log      : 호출·변환용량 미터링 로그 (client_id, key_id, input_bytes, output_bytes, total_traffic_bytes, megapixel_count, 응답속도, 산정비용)
+   - api_billing_history: 월별 정산 및 결제 내역 (기본구독료 + 초과변환용량 종량 정산, 총호출건수, 결제상태)
+
+7. 선도 플랫폼 벤치마킹 고도화 및 사용자 웹 포털 (My Gallery)
+   - WebP 자동 압축   : 업로드 시 WebP 자동 변환으로 디스크/트래픽 60% 절약 (동일 10GB에 3배 사진 보관)
+   - 대량 일괄 업로드 : 드래그&드롭 최대 50장 동시 업로드 & 비동기 백그라운드 큐 처리
+   - 폴더 및 태그     : 캠페인별/병원별 폴더 생성 및 시술명 태그 자동 분류
+   - 휴지통 복구      : 실수 삭제 방지 Soft Delete 지원 (30일 내 원클릭 복구, 이후 영구삭제)
+   - 엑셀 일괄 내보내기: 추출된 시술명, 정가, 할인가, 조건 엑셀(XLSX)/CSV 일괄 다운로드
+
+8. 단계별 실행 계획 (픽트로 Pictro 통합 플랫폼)
+   - 0단계: MySQL Pictro 상용 DB 스키마 구축 (서버: thrillrig.com:3306, DB: Pictro, ID: pictro / PW: pictro!@#$, DDL: Pictro\Program\Database\pictro.ddl / 테이블 15종, 시드 데이터, 트리거 3종)
+   - 1단계: WebP 변환 & AI 배경 복원(simple-lama-inpainting) & OpenCV K-Means 글자색(HEX) 추출 및 동일 색상 다국어 1:1 치환 합성 엔진
+   - 2단계: 사용자 전용 웹 포털 (My Gallery: 대량 업로드, 폴더, 엑셀 추출, 휴지통, 배경복원/치환 토글, 사용자 번역 교정 UI)
+   - 3단계: 언어별·분야별 사용자 교정 용어사전 DB (`translation_glossary_db`) 및 DeepSeek LLM 자가 학습 주입기 (`glossary_manager.py`)
+   - 4단계: 이용 감사 원장 (`client_credit_ledger`) 및 월별 상세 이용 정산 명세서 (Audit Statement) PDF/Excel 자동 발급 시스템
+   - 5단계: 상업용 서비스 이용약관 및 개인정보/결제/저작권 정책 독립 마크다운 파일 (`legal_policies/`) 체계화 및 동의 감사 DB
+   - 6단계: 전국 의원 마스터 수집 엔진 (HIRA 공공데이터 API) & 배너 크롤러
+   - 7단계: 관리자 포털(http://thrillrig.com:49990/admin) 구축 (3단 비교 검수 + 고객사/키 관리 + 정산 관리)
+   - 8단계: Android Studio & Xcode 전용 모바일 앱 프로젝트 구축 (카메라 즉시 촬영 OCR, 핀치줌 뷰어, 푸시 알림, 결제, 치환 토글)
+   - 9단계: 주기적 동기화 배치 & 휴지통(30일)/미구독 유예기간 만료 자동 영구정리 Cron
+
+9. 엔터프라이즈 물리적 소스 디렉토리 체계 확립 (Program/ 기반 7대 표준 디렉토리)
+   - 최상위 개발/실행 루트: D:\Project\FoxUnni\Pictro\Program\ (서버: /home/mika/Project/ThrillRig/Program/Pictro/)
+   - [1] cfg/       : 시스템 설정 디렉토리 (config.cfg 관리자 INI 튜닝, config_loader.py 핫리로딩, settings.py, constants.py)
+   - [2] Service/   : 백엔드 핵심 서비스 & AI 멀티모달 파이프라인 (main.py, core/, auth, storage, engine_ocr, engine_llm, translation, billing, api 9종, notifier, cron, deploy)
+   - [3] App/       : 클라이언트 어플리케이션 레이어 (android 네이티브 카메라/뷰어, ios 네이티브, web 관리자 검수 & 사용자 My Gallery)
+   - [4] datas/     : 영구 데이터 스토리지 및 파일 보관소 (storage/users/{client_id}/ 회원별 WebP 보관, temp_uploads 일괄업로드 버퍼, exports 엑셀추출 파일)
+   - [5] Doc/       : 솔루션 기술 문서, 설계 산출물 및 매뉴얼 보관 디렉토리
+   - [6] logs/      : 시스템 회전 로깅 및 감사 추적 (service.log, access.log, error.log, cron.log, billing_audit.log 생성 완료)
+   - [7] resources/ : 정적 자원, 공식 로고, 다국어 폰트 및 법률 문서 (logos/ 공식 로고 6종 이관 완료, legal_policies, fonts, templates)
+
+10. 픽트로 공식 대표 로고(Symbol Mark) 확정
+   - 확정 디자인: [시안 B: 뷰파인더 & 스마트 번역 듀얼 카드] (Apple / Stripe 스타일 2D 모던 미니멀 라인 아트)
+   - 상징 요소:
+     * 외곽 사각 뷰파인더 앵글: 이미지 영역 탐지 및 실시간 카메라/OCR 비전 스캔
+     * 중앙 듀얼 카드 & AI 연결 노드: 원본 텍스트 카드 ➔ AI 다국어 치환 컬러 텍스트 카드로의 직관적 변환
+   - 로고 저장 경로 (Program/resources/logos/):
+     * D:\Project\FoxUnni\Pictro\Program\resources\logos\pictro_logo.svg (공식 무손실 벡터 마스터)
+     * D:\Project\FoxUnni\Pictro\Program\resources\logos\pictro_symbol.svg (투명 배경 벡터 심볼)
+     * D:\Project\FoxUnni\Pictro\Program\resources\logos\pictro_logo.png (외곽 배경 투명화 공식 고해상도 PNG)
+     * D:\Project\FoxUnni\Pictro\Program\resources\logos\pictro_symbol.png (완전 투명 배경 라인 심볼 PNG)
+     * D:\Project\FoxUnni\Pictro\Program\resources\logos\pictro_logo.jpg (공식 래스터 마스터)
+     * D:\Project\FoxUnni\Pictro\Program\resources\logos\pictro_symbol.jpg (앱 아이콘/파비콘 심볼)
+
+11. 프로젝트 공식 브랜드명 확정: 픽트로 (Pictro)
+   - 선정이유: Picture(이미지 비전) + Translation(다국어 번역) + Maestro(디자인/폰트 복원 장인)
+   - 프로젝트 루트 디렉토리 이전: D:\Project\FoxUnni\Pictro\ (서버: /home/mika/Project/ThrillRig/Program/Pictro/)
+   - 로고 및 리소스 접두어: kari_solution_* ➔ pictro_* 6종 정식 전환 완료
+   - 설계 문서(개발계획서, 소스 모듈 구성도, 개발노트) 내 '카리 솔루션' ➔ '픽트로(Pictro)' 동기화 완료
+
+12. 서버(mika) 퍼스트 구현 원칙 및 독립 B2B OCR API 외부 제공 스펙 확정
+   - 서버(mika) 우선 구현:
+     * AI 배경 복원(LaMa Inpainting) 및 텍스트 치환 엔진의 GPU 가속과 초고속 0.5초 응답을 위해 mika 서버(/home/mika/Project/ThrillRig/Program/Pictro/)에 먼저 환경 구축 및 실증
+     * 로컬 구동 중인 DeepSeek-R1 LLM(39990 포트)과 Localhost 즉시 연동
+   - 독립 B2B OCR API 외부 서비스 제공:
+     * 엔드포인트: POST /api/v1/ocr/recognize (텍스트, 정밀 바운딩박스 좌표, 신뢰도 JSON 초고속 0.1초 반환)
+     * 시각화 옵션: visualize=true 시 바운딩박스 오버레이 검수 이미지 동시 제공
+     * 과금 모델: 이미지 번역/치환 풀코스 구독과 별개로 'OCR 단독 플랜(호출 건당 과금 또는 월간 건수 패키지)' 미터링 연동
+     * 엔진 분리: engine_ocr/ 모듈을 치환 파이프라인과 디커플링하여 단독 서비스 보장
+
+13. 핵심 엔진 2단계: AI 배경 복원 및 글자색 추출 치환 엔진 (translation/) 구축 및 서버 실증 완료
+   - 구현 모듈 (Program/Service/translation/):
+     * inpainter.py : OpenCV Inpainting 기반 바운딩박스 모폴로지 팽창 및 글자 제거/배경 복원
+     * color_extractor.py : K-Means 기반 원본 글자 메인 RGB/Hex 대표색 정밀 추출
+     * font_renderer.py : 다국어 TTF 폰트 크기 자동 스케일링(Auto-scaling) 및 안티에일리어싱 텍스트 합성
+     * pipeline.py : 일체형 이미지 치환 파이프라인 (ImageTranslationPipeline)
+   - 서버(mika) 배포 및 실증 테스트 결과:
+     * 배포 경로: /home/mika/Project/ThrillRig/Program/Pictro/Service/translation/
+     * 원본 배너 생성 ➔ 글자 완벽 지우기(배경 복원) ➔ 원본 색상 자동 추출 ➔ 다국어 치환 합성 성공
+     * 색상 추출 정확도: 원본 로열 네이비 RGB(25, 45, 95) ➔ #192d5f (100% 일치)
+     * 결과 산출물 로컬 저장: Program/datas/ (sample_orig.png, sample_clean_bg.png, sample_translated.png)
+
+14. 픽트로(Pictro) 3단 변환 통합 엔진(OCR + Clear + 치환) 및 DeepSeek 4-bit LLM 공존 체계 확정
+   - 아키텍처 원칙:
+     * 기존 DeepSeek 4-bit 양자화 LLM(포트: 39990)은 100% 온전히 보존 및 우선 유지
+     * 픽트로 파이프라인은 [Step 1: PaddleOCR] ➔ [Step 2: Clear 순수 피부 복원(목걸이/장신구 배제)] ➔ [Step 3: 영문/현지 통화 치환] 일체형 구동
+   - 구현 모듈:
+     * Program/Service/pictro_engine.py : 3단계 원스톱 처리 통합 클래스 (PictroEngine)
+     * Program/Service/main.py : 픽트로 독립 RESTful API 서비스 (포트: 49991)
+   - 실증 검증 완료:
+     * 목걸이/초커/귀걸이 등 불필요 장신구 100% 원천 배제 및 자연스러운 맨살(Bare Skin) 복원 달성
+     * mika 서버 i7-13700K 16스레드 기반 글자 잔상 0% 상용급 배너 생성 검증 완료
+
+
+

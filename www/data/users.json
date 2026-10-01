@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "email": "test@shinsa.com",
+        "password": "$2y$10$wE7M5vVb4C6y4tO9z.P2GOMV3uUuP.7P9P2P.7P9P2P.7P9P2P.7P",
+        "name": "카리나",
+        "gender": "F",
+        "created_at": "2026-06-18 10:00:00"
+    },
+    {
+        "id": 2,
+        "email": "admin@shinsa.com",
+        "password": "$2y$10$wE7M5vVb4C6y4tO9z.P2GOMV3uUuP.7P9P2P.7P9P2P.7P9P2P.7P",
+        "name": "신규회원",
+        "gender": "F",
+        "created_at": "2026-06-18 10:00:00"
+    },
+    {
+        "id": 3,
+        "email": "kari0817@naver.com",
+        "password": "$2y$12$oS7NW\/DVVgPIvSZ8XNl1MOs9DrSvhGKJwcVXs0fkClApob31LGvoW",
+        "name": "카리",
+        "gender": "F",
+        "created_at": "2026-06-18 08:54:12"
+    }
+]

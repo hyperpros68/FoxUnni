@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pictro - 고객사 로그인 & 회원가입</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 24, 38, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --input-bg: rgba(10, 14, 23, 0.7);
+      --input-border: rgba(255, 255, 255, 0.12);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+      font-family: 'Pretendard', sans-serif;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-container {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    .logo-area {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+      margin-bottom: 12px;
+    }
+    .logo-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #fff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .logo-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .auth-tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      height: 44px;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      padding: 0 14px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .btn-submit {
+      width: 100%;
+      height: 46px;
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      margin-top: 10px;
+    }
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .demo-hint {
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px dashed rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
+      font-size: 12px;
+      color: #93c5fd;
+      line-height: 1.5;
+    }
+    .demo-hint code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #67e8f9;
+      font-family: monospace;
+    }
+    .footer-links {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .footer-links a {
+      color: #93c5fd;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #fff; text-decoration: underline; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container">
+    <div class="logo-area">
+      <div class="logo-badge">P</div>
+      <div class="logo-title">PICTRO STUDIO</div>
+      <div class="logo-subtitle">AI 배너 다국어 비전 & 1:1 치환 플랫폼</div>
+    </div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">로그인</div>
+      <div class="auth-tab" id="tabRegister" onclick="switchTab('register')">회원가입</div>
+    </div>
+
+    <!-- 1. 로그인 폼 -->
+    <form id="formLogin" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">고객사 이메일</label>
+        <input type="email" id="loginEmail" class="form-input" placeholder="manager@hospital.com" required value="demo@hospital.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">비밀번호</label>
+        <input type="password" id="loginPassword" class="form-input" placeholder="비밀번호를 입력하세요" required value="demo1234!">
+      </div>
+      <button type="submit" class="btn-submit" id="btnLoginSubmit">고객사 포털 로그인</button>
+
+      <div class="demo-hint">
+        💡 <strong>체험용 데모 계정 정보</strong><br>
+        아이디: <code>demo@hospital.com</code> / 암호: <code>demo1234!</code>
+      </div>
+    </form>
+
+    <!-- 2. 회원가입 폼 -->
+    <form id="formRegister" class="hidden" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label class="form-label">병원 또는 기업명</label>
+        <input type="text" id="regCompany" class="form-input" placeholder="예: 아름다운성형외과" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">담당자 성함</label>
+        <input type="text" id="regName" class="form-input" placeholder="홍길동 실장" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">로그인 이메일</label>
+        <input type="email" id="regEmail" class="form-input" placeholder="contact@domain.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">담당자 연락처</label>
+        <input type="tel" id="regPhone" class="form-input" placeholder="010-0000-0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">비밀번호 설정</label>
+        <input type="password" id="regPassword" class="form-input" placeholder="8자 이상 입력" required minlength="6">
+      </div>
+      <button type="submit" class="btn-submit" id="btnRegisterSubmit">무료 Starter 플랜 가입하기</button>
+    </form>
+
+    <div class="footer-links">
+      <a href="admin_login.html">⚙️ 슈퍼 관리자 시스템 로그인 바로가기</a>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/pictro-api/api/v1/auth';
+
+    function switchTab(mode) {
+      if (mode === 'login') {
+        document.getElementById('tabLogin').classList.add('active');
+        document.getElementById('tabRegister').classList.remove('active');
+        document.getElementById('formLogin').classList.remove('hidden');
+        document.getElementById('formRegister').classList.add('hidden');
+      } else {
+        document.getElementById('tabRegister').classList.add('active');
+        document.getElementById('tabLogin').classList.remove('active');
+        document.getElementById('formRegister').classList.remove('hidden');
+        document.getElementById('formLogin').classList.add('hidden');
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const btn = document.getElementById('btnLoginSubmit');
+      btn.disabled = true;
+      btn.textContent = '로그인 확인 중...';
+
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || '로그인에 실패했습니다.');
+
+        // 로컬스토리지에 세션 저장
+        localStorage.setItem('pictro_token', data.token);
+        localStorage.setItem('pictro_user', JSON.stringify(data.user));
+        localStorage.setItem('pictro_api_key', data.api_key);
+
+        alert(`환영합니다! ${data.user.company_name} 계정으로 로그인되었습니다.`);
+        window.location.href = 'gallery.html';
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '고객사 포털 로그인';
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const company_name = document.getElementById('regCompany').value.trim();
+      const manager_name = document.getElementById('regName').value.trim();
+      const manager_email = document.getElementById('regEmail').value.trim();
+      const manager_phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const btn = document.getElementById('btnRegisterSubmit');
+      btn.disabled = true;
+      btn.textContent = '회원가입 처리 중...';
+
+      try {
+        const res = await fetch(`${API_BASE}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ company_name, manager_name, manager_email, manager_phone, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || '회원가입에 실패했습니다.');
+
+        alert(`회원가입이 완료되었습니다!\n발급된 API Key: ${data.api_key}\n로그인을 진행해 주세요.`);
+        switchTab('login');
+        document.getElementById('loginEmail').value = manager_email;
+        document.getElementById('loginPassword').value = '';
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '무료 Starter 플랜 가입하기';
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>픽트로 (Pictro) 상용 구독 플랜 및 B2B 과금 체계 안내</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #111622;
+      --bg-card: rgba(22, 28, 42, 0.7);
+      --bg-code: #07090e;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(79, 140, 255, 0.3);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --gradient-brand: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.65;
+    }
+
+    /* Top Nav */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(10, 13, 20, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 40px;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--gradient-brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+    }
+    .brand-text {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #f1f5f9;
+    }
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-guide {
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      border: 1px solid var(--border-color);
+    }
+    .btn-guide:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .btn-swagger {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .btn-studio {
+      background: var(--gradient-brand);
+      color: #fff;
+      border: none;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px 24px;
+    }
+
+    /* Header */
+    .header-box {
+      text-align: center;
+      padding: 48px 20px 32px 20px;
+    }
+    .header-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: rgba(139, 92, 246, 0.15);
+      color: #c084fc;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    .header-title {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+    .header-desc {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Pricing Grid (3 Plans) */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin: 40px 0 60px 0;
+    }
+    .plan-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .plan-card:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+    .plan-card.featured {
+      border: 2px solid #8b5cf6;
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(22, 28, 42, 0.8) 100%);
+    }
+    .featured-tag {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: var(--gradient-brand);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+    .plan-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .plan-target {
+      color: var(--text-muted);
+      font-size: 13px;
+      min-height: 38px;
+      margin-bottom: 20px;
+    }
+    .plan-price-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .price-num {
+      font-size: 38px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+    .price-unit {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      font-size: 13.5px;
+      margin-bottom: 30px;
+      flex-grow: 1;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      color: #cbd5e1;
+    }
+    .feature-item strong {
+      color: #f1f5f9;
+    }
+    .check-icon {
+      color: #10b981;
+      font-weight: 800;
+      margin-top: 1px;
+    }
+
+    /* Section Styling */
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 48px 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.5px;
+    }
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 22px;
+      background: var(--gradient-brand);
+      border-radius: 2px;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 32px 0;
+      font-size: 14px;
+    }
+    .data-table th, .data-table td {
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+    .data-table th {
+      background: rgba(255, 255, 255, 0.03);
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .data-table td {
+      background: var(--bg-card);
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #38bdf8;
+    }
+
+    /* Notice Box */
+    .notice-box {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: #93c5fd;
+    }
+    .notice-title {
+      font-weight: 700;
+      color: #bfdbfe;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border-color);
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <a href="/pictro-api/billing" class="brand-wrap">
+      <div class="brand-logo">P</div>
+      <div class="brand-text">PICTRO BILLING POLICY</div>
+    </a>
+    <div class="nav-links">
+      <a href="/pictro/" target="_blank" class="nav-btn btn-studio">🎨 픽트로 스튜디오</a>
+      <a href="/pictro-api/guide" class="nav-btn btn-guide">📖 API 연동 가이드</a>
+      <a href="/pictro-api/docs" target="_blank" class="nav-btn btn-swagger">⚡ Swagger UI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header-box">
+      <div class="header-badge">COMMERCIAL PRICING & QUOTA</div>
+      <h1 class="header-title">픽트로 (Pictro) 상용 구독 플랜 및 과금 체계</h1>
+      <p class="header-desc">
+        AI 멀티모달 배너 OCR 분석, AI 배경 복원 및 다국어 폰트 치환을 위한<br>
+        합리적인 3단계 정기 구독 및 B2B I/O 트래픽 미터링 정책을 안내합니다.
+      </p>
+    </div>
+
+    <!-- 3 Plan Cards -->
+    <div class="pricing-grid">
+      <!-- Plan 1 -->
+      <div class="plan-card">
+        <div class="plan-name">1단계: 베이직 (Starter)</div>
+        <div class="plan-target">소형 피부/성형 의원, 1인 마케터 및 개인 디자이너</div>
+        <div class="plan-price-wrap">
+          <span class="price-num">19,000</span>
+          <span class="price-unit">원 / 월 (VAT 포함)</span>
+        </div>
+        <ul class="feature-list">
+          <li class="feature-item"><span class="check-icon">✓</span><span>기본 보관 스토리지: <strong>10 GB</strong> (약 15,000장)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>월 기본 변환 트래픽: <strong>50 GB</strong> (약 25,000회)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>초과 변환 종량 단가: <strong>100원 / 1GB</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>단건 최대 이미지 크기: <strong>50 MB</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>일일 API 호출 한도: <strong>500 회 / 일</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>속도 제한: <strong>60 RPM</strong> (분당 60회)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>구독 만료 시 유예: <strong>30일간 안전 보관</strong></span></li>
+        </ul>
+      </div>
+
+      <!-- Plan 2 (Featured) -->
+      <div class="plan-card featured">
+        <span class="featured-tag">MOST POPULAR</span>
+        <div class="plan-name">2단계: 프로 (Business)</div>
+        <div class="plan-target">중대형 전문 병원, 광고 마케팅 에이전시, 대행사</div>
+        <div class="plan-price-wrap">
+          <span class="price-num">59,000</span>
+          <span class="price-unit">원 / 월 (VAT 포함)</span>
+        </div>
+        <ul class="feature-list">
+          <li class="feature-item"><span class="check-icon">✓</span><span>기본 보관 스토리지: <strong>50 GB</strong> (약 75,000장)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>월 기본 변환 트래픽: <strong>300 GB</strong> (약 150,000회)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>초과 변환 종량 단가: <strong>80원 / 1GB (20% 할인)</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>단건 최대 이미지 크기: <strong>100 MB</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>일일 API 호출 한도: <strong>3,000 회 / 일</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>속도 제한: <strong>300 RPM</strong> (분당 300회)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>구독 만료 시 유예: <strong>30일간 안전 보관</strong></span></li>
+        </ul>
+      </div>
+
+      <!-- Plan 3 -->
+      <div class="plan-card">
+        <div class="plan-name">3단계: 엔터프라이즈 (Enterprise)</div>
+        <div class="plan-target">대형 프랜차이즈 병원, 글로벌 플랫폼, 대규모 크롤러 연동사</div>
+        <div class="plan-price-wrap">
+          <span class="price-num">190,000</span>
+          <span class="price-unit">원 / 월 (VAT 포함)</span>
+        </div>
+        <ul class="feature-list">
+          <li class="feature-item"><span class="check-icon">✓</span><span>기본 보관 스토리지: <strong>100 GB</strong> (약 150,000장)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>월 기본 변환 트래픽: <strong>1,000 GB (1TB)</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>초과 변환 종량 단가: <strong>50원 / 1GB (50% 최저가)</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>단건 최대 이미지 크기: <strong>200 MB</strong></span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>일일 API 호출 한도: <strong>10,000 회 / 일</strong> (확장 가능)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>속도 제한: <strong>600 RPM</strong> (초당 10회 동시 처리)</span></li>
+          <li class="feature-item"><span class="check-icon">✓</span><span>구독 만료 시 유예: <strong>60일간 안전 보관</strong></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Hybrid Metering Section -->
+    <h2 class="section-title">B2B 변환 용량 및 해상도 복합 미터링 과금 모델 (Hybrid Metering)</h2>
+    <p style="color: #cbd5e1; margin-bottom: 16px;">
+      단순 호출 횟수 과금을 지양하고, 실제 서버 리소스 점유와 전송 대역폭을 공정하게 정산하기 위해 <strong>I/O 트래픽 바이트 + 메가픽셀 가중치</strong> 모델을 채택합니다.
+    </p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>해상도 티어</th>
+          <th>해상도 픽셀 범위</th>
+          <th>화소 기준</th>
+          <th>연산 가중치</th>
+          <th>주요 사용처</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag">Standard (표준)</span></td>
+          <td>200만 화소 이하</td>
+          <td>FHD (1920×1080) 이하</td>
+          <td><strong>1.0x (기본)</strong></td>
+          <td>일반 웹/모바일 이벤트 배너</td>
+        </tr>
+        <tr>
+          <td><span class="tag">High-Res (고해상도)</span></td>
+          <td>200만 ~ 850만 화소</td>
+          <td>QHD ~ 4K UHD</td>
+          <td><strong>1.5x</strong></td>
+          <td>원내 대형 롤업 배너, 인쇄물</td>
+        </tr>
+        <tr>
+          <td><span class="tag">Ultra-Res (초고해상도)</span></td>
+          <td>850만 화소 초과</td>
+          <td>4K 초과 대형 그래픽</td>
+          <td><strong>2.5x</strong></td>
+          <td>초대형 옥외 전광판, 무손실 원본</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="notice-box">
+      <div class="notice-title">💡 초과 트래픽 예산 방어 (Hard Limit) 지원</div>
+      고객사별로 월간 예산 상한선(<span class="tag">hard_limit_bytes</span>)을 설정할 수 있습니다. 
+      설정된 금액 이상의 초과 호출이 발생할 경우 즉시 HTTP 429 코드를 반환하여 예상치 못한 초과 요금 청구를 사전에 완벽 차단합니다.
+    </div>
+
+    <!-- Grace Period Section -->
+    <h2 class="section-title">스토리지 보관 및 유예 정책 (Grace Period)</h2>
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+      <h3 style="font-size: 16px; margin-bottom: 10px; color: #34d399;">1. WebP 60% 압축 엔진 기본 적용</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 18px;">
+        모든 업로드 및 치환 결과물은 WebP로 무손실 압축되어 원본 JPG/PNG 대비 60% 이상의 디스크 및 트래픽을 절감합니다. (10GB 플랜 기준 최대 15,000장 이상 보관 가능)
+      </p>
+
+      <h3 style="font-size: 16px; margin-bottom: 10px; color: #fbbf24;">2. 결제 실패 / 구독 해지 시 30일 유예 (Grace Period)</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 18px;">
+        구독이 만료되거나 카드 결제가 실패하더라도 즉시 데이터를 삭제하지 않으며, <strong>30일간 보호 보관</strong>됩니다. 30일 이내에 재구독 시 소중한 배너 및 OCR 이력이 100% 온전히 유지됩니다.
+      </p>
+
+      <h3 style="font-size: 16px; margin-bottom: 10px; color: #60a5fa;">3. 실수 삭제 방지 휴지통 원클릭 복구 (Soft Delete)</h3>
+      <p style="color: var(--text-muted); font-size: 14px;">
+        웹 포털에서 사용자가 삭제한 배너는 즉시 파기되지 않고 휴지통으로 이동하며, 30일 이내에는 언제든지 원클릭으로 완벽하게 복구할 수 있습니다.
+      </p>
+    </div>
+
+  </div>
+
+  <footer>
+    &copy; 2026 픽트로 (Pictro) Enterprise Vision AI Platform. All rights reserved.
+  </footer>
+</body>
+</html>
