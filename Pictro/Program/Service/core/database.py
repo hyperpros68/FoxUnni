@@ -55,3 +55,14 @@ def execute(sql: str, params: Optional[tuple] = None) -> int:
             return affected
     finally:
         conn.close()
+
+def execute_insert(sql: str, params: Optional[tuple] = None) -> int:
+    """INSERT 실행 후 생성된 AUTO_INCREMENT ID (lastrowid) 반환 헬퍼"""
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(sql, params or ())
+            return cursor.lastrowid
+    finally:
+        conn.close()
+

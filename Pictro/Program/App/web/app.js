@@ -14,7 +14,8 @@ const state = {
   items: [],
   zoomLevel: 1.0,
   activeTab: 'sideBySide',
-  activeInspectorTab: 'editorView' // 'editorView' | 'jsonView'
+  activeInspectorTab: 'editorView', // 'editorView' | 'jsonView'
+  currentHistoryId: null
 };
 
 let currentJsonPayload = null;
@@ -87,6 +88,7 @@ const statWcag = document.getElementById('statWcag');
 
 const btnDownloadJson = document.getElementById('btnDownloadJson');
 const btnDownloadImage = document.getElementById('btnDownloadImage');
+const btnSaveToGallery = document.getElementById('btnSaveToGallery');
 
 // Initialize Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
@@ -99,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupZoomTools();
   setupProcessButton();
   setupExportButtons();
+  setupAuthUI();
 
   // Load Sample 1 by default
   loadSampleData(SAMPLE_BANNER5);
@@ -967,6 +970,11 @@ function setupProcessButton() {
         formData.append('image_url', state.currentImageSource);
       }
 
+      // 현재 로그인된 사용자 API 키 및 auto_save(0: 임시/테스트, 즉시 용량 차감) 전달
+      const userApiKey = localStorage.getItem('pictro_api_key') || 'FOXUNNI-PARTNER-MASTER-KEY-2026';
+      formData.append('api_key', userApiKey);
+      formData.append('auto_save', '0');
+
       let errorMessage = null;
 
       try {
@@ -1021,6 +1029,22 @@ function setupProcessButton() {
             outputImg.src = state.transOutUrl;
             outputImg.classList.remove('hidden');
             if (outputPlaceholder) outputPlaceholder.classList.add('hidden');
+          }
+
+          if (d.history_id || state.transOutUrl) {
+            state.currentHistoryId = d.history_id || 0;
+            const isLoggedIn = !!(localStorage.getItem('pictro_token') && localStorage.getItem('pictro_api_key'));
+            if (btnSaveToGallery) {
+              if (isLoggedIn) {
+                btnSaveToGallery.style.display = 'block';
+                btnSaveToGallery.disabled = false;
+                btnSaveToGallery.style.opacity = '1';
+                btnSaveToGallery.innerHTML = '📁 내 보관함(갤러리)에 저장';
+                btnSaveToGallery.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+              } else {
+                btnSaveToGallery.style.display = 'none';
+              }
+            }
           }
 
           const rawItems = d.items || (d.meta_data && d.meta_data.items) || [];
@@ -1149,4 +1173,72 @@ function setupExportButtons() {
       URL.revokeObjectURL(url);
     }, 'image/png', 0.98);
   });
+
+  // 내 보관함(갤러리)에 정식 등록 버튼
+  if (btnSaveToGallery) {
+    btnSaveToGallery.addEventListener('click', async () => {
+      if (!state.currentHistoryId) {
+        alert('보관함에 저장할 변환 결과물이 없습니다.');
+        return;
+      }
+      btnSaveToGallery.disabled = true;
+      btnSaveToGallery.innerHTML = '⏳ 보관함 등록 처리 중...';
+
+      try {
+        const apiKey = localStorage.getItem('pictro_api_key') || 'FOXUNNI-PARTNER-MASTER-KEY-2026';
+        const saveUrl = window.location.origin.includes('thrillrig.com')
+          ? '/pictro-api/api/v1/gallery/save_banner'
+          : 'http://thrillrig.com:9990/pictro-api/api/v1/gallery/save_banner';
+
+        const fd = new FormData();
+        fd.append('history_id', state.currentHistoryId);
+
+        const res = await fetch(saveUrl, {
+          method: 'POST',
+          headers: { 'X-API-Key': apiKey },
+          body: fd
+        });
+        const resData = await res.json();
+
+        if (resData.success) {
+          btnSaveToGallery.innerHTML = '✔ 보관함 저장 완료';
+          btnSaveToGallery.style.background = '#047857';
+          alert('📁 내 갤러리 보관함에 안전하게 저장되었습니다!\n상단 [구독자 포털 (My Gallery)]에서 확인하실 수 있습니다.');
+        } else {
+          throw new Error(resData.detail || '보관함 등록에 실패했습니다.');
+        }
+      } catch (err) {
+        alert('보관함 등록 실패: ' + err.message);
+        btnSaveToGallery.disabled = false;
+        btnSaveToGallery.innerHTML = '📁 내 보관함(갤러리)에 저장';
+      }
+    });
+  }
+}
+
+// Check Login State and Adjust UI Elements
+function setupAuthUI() {
+  const token = localStorage.getItem('pictro_token');
+  const apiKey = localStorage.getItem('pictro_api_key');
+  const isLoggedIn = !!(token && apiKey);
+
+  const btnGalleryLink = document.querySelector('.btn-gallery');
+  if (!isLoggedIn) {
+    // 비로그인 사용자: 보관함 저장 버튼 완전 숨김 (개인 보관함 없음)
+    if (btnSaveToGallery) {
+      btnSaveToGallery.style.display = 'none';
+    }
+    // 상단 네비게이션을 로그인 유도로 전환
+    if (btnGalleryLink) {
+      btnGalleryLink.innerHTML = '🔑 로그인 / 가입';
+      btnGalleryLink.href = 'login.html';
+      btnGalleryLink.style.background = 'rgba(59, 130, 246, 0.15)';
+      btnGalleryLink.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+    }
+  } else {
+    // 로그인 사용자: 저장 버튼 표시 (초기에는 비활성화)
+    if (btnSaveToGallery) {
+      btnSaveToGallery.style.display = 'block';
+    }
+  }
 }

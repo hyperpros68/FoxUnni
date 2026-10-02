@@ -674,6 +674,7 @@ async def pictro_process(
     image_url: Optional[str] = Form(None, description="원격 배너 이미지 웹 URL (선택)", example="http://thrillrig.com:9990/pictro/examples/banner5_orig.jpg"),
     mode: str = Form("trans", description="3대 동작 모드: detect (OCR 탐색, 약 1초) | clear (AI 배경 복원, 약 4초) | trans (풀코스 치환, 약 6초)", example="trans"),
     target_lang: str = Form("en", description="목표 언어 코드: en (영어) | ja (일본어) | zh-CN (중국어 간체) | zh-TW (중국어 번체) | vi (베트남어) | th (태국어)", example="ja"),
+    auto_save: bool = Form(False, description="갤러리 보관함 즉시 정식 등록 여부 (기본값 False: 임시/테스트, True: 즉시 보관함 등록)"),
     auth_user: Dict[str, Any] = Depends(APIKeyValidator.validate_key)
 ):
     if not engine:
@@ -717,23 +718,25 @@ async def pictro_process(
             duration_ms=duration_ms
         )
 
-        # 구독자 보관함(user_ocr_history) 자동 적재 및 스토리지 용량 동기화
+        # 구독자 보관함(user_ocr_history) 적재 및 스토리지 용량 동기화 (테스트여도 사용량은 즉시 차감)
+        new_history_id = 0
         try:
-            from core.database import execute
+            from core.database import execute, execute_insert
             orig_url = f"/files/{req_id}/{os.path.basename(input_path)}"
             items_list = res.get("items", [])
             text_summary = " ".join([it.get("text", "") for it in items_list[:5]])
             parsed_json_str = json.dumps(items_list, ensure_ascii=False)
             
             visual_url = vis_url or orig_url
+            saved_flag = 1 if auto_save else 0
             insert_history_sql = """
                 INSERT INTO user_ocr_history
                 (client_id, original_webp_path, thumb_webp_path, visual_webp_path, clean_bg_webp_path, 
-                 translated_webp_path, image_size_bytes, target_lang, parsed_text_summary, 
+                 translated_webp_path, image_size_bytes, target_lang, is_saved, parsed_text_summary, 
                  parsed_json, translated_json, is_deleted)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 0)
             """
-            execute(insert_history_sql, (
+            new_history_id = execute_insert(insert_history_sql, (
                 auth_user["client_id"],
                 orig_url,
                 trans_url or orig_url,
@@ -742,12 +745,13 @@ async def pictro_process(
                 trans_url,
                 input_bytes + total_out_bytes,
                 target_lang,
+                saved_flag,
                 text_summary[:1000] if text_summary else "배너 이미지",
                 parsed_json_str,
                 json.dumps([{"translated_text": it.get("translated_text", "")} for it in items_list], ensure_ascii=False)
             ))
 
-            # 스토리지 누적 용량 갱신
+            # 테스트여도 사용한 만큼 계정 누적 스토리지 차감 (게이지 즉시 반영)
             update_storage_sql = """
                 UPDATE api_client_user
                 SET current_storage_bytes = current_storage_bytes + %s
@@ -760,6 +764,8 @@ async def pictro_process(
         return {
             "success": True,
             "request_id": req_id,
+            "history_id": new_history_id,
+            "is_saved": bool(auto_save),
             "mode": mode,
             "target_lang": target_lang,
             "processing_time_ms": duration_ms,
@@ -946,12 +952,12 @@ def get_gallery_dashboard(
     if not user_info:
         raise HTTPException(status_code=404, detail="고객사 정보를 찾을 수 없습니다.")
 
-    # 2. 배너 보관 수 통계
+    # 2. 배너 보관 수 통계 (공식 저장된 배너 기준)
     count_sql = """
         SELECT 
-            COUNT(CASE WHEN is_deleted = 0 THEN 1 END) AS active_count,
-            COUNT(CASE WHEN is_deleted = 1 THEN 1 END) AS trash_count,
-            COALESCE(SUM(CASE WHEN is_deleted = 0 THEN image_size_bytes ELSE 0 END), 0) AS active_bytes
+            COUNT(CASE WHEN is_deleted = 0 AND is_saved = 1 THEN 1 END) AS active_count,
+            COUNT(CASE WHEN is_deleted = 1 AND is_saved = 1 THEN 1 END) AS trash_count,
+            COALESCE(SUM(CASE WHEN is_deleted = 0 AND is_saved = 1 THEN image_size_bytes ELSE 0 END), 0) AS active_bytes
         FROM user_ocr_history
         WHERE client_id = %s
     """
@@ -991,11 +997,11 @@ def list_gallery_items(
     offset: int = 0,
     auth_user: Dict[str, Any] = Depends(APIKeyValidator.validate_key)
 ):
-    """보관함 또는 휴지통 배너 목록 페이징 조회"""
+    """보관함 또는 휴지통 배너 목록 페이징 조회 (공식 저장된 배너만 조회)"""
     client_id = auth_user["client_id"]
     from core.database import query_all
 
-    where_clauses = ["client_id = %s", "is_deleted = %s"]
+    where_clauses = ["client_id = %s", "is_deleted = %s", "is_saved = 1"]
     params = [client_id, 1 if is_trash else 0]
 
     if folder_id is not None:
@@ -1029,6 +1035,31 @@ def list_gallery_items(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"갤러리 목록 조회 실패: {str(e)}")
+
+
+@app.post("/api/v1/gallery/save_banner", summary="1:1 스튜디오 변환 배너를 갤러리 보관함에 공식 등록", tags=["5. 구독자 갤러리 & 대시보드"])
+def save_banner_to_gallery(
+    history_id: int = Form(..., description="보관함에 등록할 배너의 history_id"),
+    auth_user: Dict[str, Any] = Depends(APIKeyValidator.validate_key)
+):
+    """1:1 스튜디오에서 테스트/변환된 배너를 구독자 보관함(is_saved = 1)으로 확정 등록"""
+    client_id = auth_user["client_id"]
+    from core.database import execute
+    
+    update_sql = """
+        UPDATE user_ocr_history
+        SET is_saved = 1
+        WHERE history_id = %s AND client_id = %s
+    """
+    affected = execute(update_sql, (history_id, client_id))
+    if affected == 0:
+        raise HTTPException(status_code=404, detail="해당 배너 이력을 찾을 수 없거나 등록 권한이 없습니다.")
+    
+    return {
+        "success": True,
+        "message": "갤러리 보관함에 성공적으로 등록되었습니다.",
+        "history_id": history_id
+    }
 
 
 @app.post("/api/v1/gallery/trash", summary="배너 휴지통으로 이동 (30일 유예)", tags=["5. 구독자 갤러리 & 대시보드"])

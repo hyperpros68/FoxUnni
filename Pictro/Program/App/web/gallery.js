@@ -484,6 +484,7 @@ el.btnStartBatchUpload.addEventListener('click', async () => {
       formData.append('image', file);
       formData.append('mode', 'trans');
       formData.append('target_lang', lang);
+      formData.append('auto_save', 'true');
 
       await fetch(`${API_BASE}/pictro/process`, {
         method: 'POST',
